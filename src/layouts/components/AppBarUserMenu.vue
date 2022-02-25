@@ -45,9 +45,9 @@
           style="vertical-align:middle"
         >
           <span class="text--primary font-weight-semibold mb-n1">
-            John Doe
+            {{userName}}
           </span>
-          <small class="text--disabled text-capitalize">Admin</small>
+          <small class="text--disabled text-capitalize">{{userMatricula}}</small>
         </div>
       </div>
 
@@ -139,14 +139,14 @@
       <v-divider class="my-2"></v-divider>
 
       <!-- Logout -->
-      <v-list-item link>
+      <v-list-item link @click='logout'>
         <v-list-item-icon class="me-2">
           <v-icon size="22">
             {{ icons.mdiLogoutVariant }}
           </v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>Logout</v-list-item-title>
+          <v-list-item-title>Sair</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -166,8 +166,10 @@ import {
 } from '@mdi/js'
 
 export default {
-  setup() {
+  data() {
     return {
+      userName: this.$store.state.auth.user.name,
+      userMatricula: this.$store.state.auth.user.matricula,
       icons: {
         mdiAccountOutline,
         mdiEmailOutline,
@@ -176,10 +178,16 @@ export default {
         mdiCogOutline,
         mdiCurrencyUsd,
         mdiHelpCircleOutline,
-        mdiLogoutVariant,
+        mdiLogoutVariant
       },
     }
   },
+  methods: {
+    logout () {
+      this.$store.dispatch('auth/logout')
+      this.$router.push('/pages/login')
+    },
+  }
 }
 </script>
 

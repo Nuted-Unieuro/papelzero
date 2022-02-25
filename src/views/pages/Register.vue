@@ -9,7 +9,7 @@
             class="d-flex align-center"
           >
             <v-img
-              :src="require('@/assets/images/logos/logo.svg')"
+              :src="require('@/assets/images/logos/logo-zero.png')"
               max-height="30px"
               max-width="30px"
               alt="logo"
@@ -18,7 +18,7 @@
             ></v-img>
 
             <h2 class="text-2xl font-weight-semibold">
-              Materio
+              ZeroPapel
             </h2>
           </router-link>
         </v-card-title>
@@ -26,46 +26,64 @@
         <!-- title -->
         <v-card-text>
           <p class="text-2xl font-weight-semibold text--primary mb-2">
-            Adventure starts here 🚀
+            Seja bem vindo! 🚀
           </p>
           <p class="mb-2">
-            Make your app management easy and fun!
+            Faça seu cadastrado aqui.
           </p>
         </v-card-text>
 
         <!-- login form -->
         <v-card-text>
-          <v-form>
+          <v-form @submit.prevent="handleRegister">
             <v-text-field
-              v-model="username"
+              v-model="user.name"
               outlined
-              label="Username"
-              placeholder="JohnDoe"
+              label="Nome Completo"
+              placeholder="Seu nome"
               hide-details
               class="mb-3"
             ></v-text-field>
 
             <v-text-field
-              v-model="email"
+              v-model="user.email"
               outlined
               label="Email"
-              placeholder="john@example.com"
+              placeholder="email@unieuro.edu.br"
               hide-details
               class="mb-3"
             ></v-text-field>
 
             <v-text-field
-              v-model="password"
+              v-model="user.cpf"
+              outlined
+              label="CPF"
+              placeholder="111.222.333-44"
+              hide-details
+              class="mb-3"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="user.matricula"
+              outlined
+              label="Matricula"
+              placeholder="1234"
+              hide-details
+              class="mb-3"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="user.password"
               outlined
               :type="isPasswordVisible ? 'text' : 'password'"
-              label="Password"
+              label="Senha"
               placeholder="············"
               :append-icon="isPasswordVisible ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
               hide-details
               @click:append="isPasswordVisible = !isPasswordVisible"
             ></v-text-field>
 
-            <v-checkbox
+            <!-- <v-checkbox
               hide-details
               class="mt-1"
             >
@@ -73,15 +91,18 @@
                 <div class="d-flex align-center flex-wrap">
                   <span class="me-2">I agree to</span><a href="javascript:void(0)">privacy policy &amp; terms</a>
                 </div>
-              </template>
-            </v-checkbox>
+              </template> 
+            </v-checkbox>-->
 
             <v-btn
               block
               color="primary"
               class="mt-6"
+              type="submit"
+              
+              native-type="submit"
             >
-              Sign Up
+              Registrar
             </v-btn>
           </v-form>
         </v-card-text>
@@ -89,33 +110,12 @@
         <!-- create new account  -->
         <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
           <span class="me-2">
-            Already have an account?
+            Você já tem uma conta?
           </span>
           <router-link :to="{ name:'pages-login' }">
-            Sign in instead
+            Entre aqui
           </router-link>
         </v-card-text>
-
-        <!-- divider -->
-        <v-card-text class="d-flex align-center mt-2">
-          <v-divider></v-divider>
-          <span class="mx-5">or</span>
-          <v-divider></v-divider>
-        </v-card-text>
-
-        <!-- social link -->
-        <v-card-actions class="d-flex justify-center">
-          <v-btn
-            v-for="link in socialLink"
-            :key="link.icon"
-            icon
-            class="ms-1"
-          >
-            <v-icon :color="$vuetify.theme.dark ? link.colorInDark:link.color">
-              {{ link.icon }}
-            </v-icon>
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </div>
 
@@ -155,6 +155,16 @@ export default {
     const username = ref('')
     const email = ref('')
     const password = ref('')
+    const isLoading = ref(false)
+    const user = {
+      cargo: null,
+      cpf: null,
+      email: null,
+      matricula: null,
+      name: null,
+      tipo_acesso: null,
+      password: null
+    }
     const socialLink = [
       {
         icon: mdiFacebook,
@@ -184,6 +194,8 @@ export default {
       email,
       password,
       socialLink,
+      user,
+      isLoading,
 
       icons: {
         mdiEyeOutline,
@@ -191,6 +203,22 @@ export default {
       },
     }
   },
+    methods: {
+    handleRegister () {
+      this.isLoading = true
+      console.log(this)
+        this.$store.dispatch('auth/register', this.user)
+          .then(() => {
+            this.$router.push('/pages/login')
+          },
+          error => {
+            this.isLoading = false
+            //console.log(error)
+            this.showCustomError('Não autorizado!')
+          })
+      
+    }
+  }
 }
 </script>
 

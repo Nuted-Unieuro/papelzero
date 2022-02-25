@@ -9,7 +9,7 @@
             class="d-flex align-center"
           >
             <v-img
-              :src="require('@/assets/images/logos/logo.svg')"
+              :src="require('@/assets/images/logos/logo-zero.png')"
               max-height="30px"
               max-width="30px"
               alt="logo"
@@ -18,7 +18,7 @@
             ></v-img>
 
             <h2 class="text-2xl font-weight-semibold">
-              Materio
+              ZeroPapel
             </h2>
           </router-link>
         </v-card-title>
@@ -26,27 +26,27 @@
         <!-- title -->
         <v-card-text>
           <p class="text-2xl font-weight-semibold text--primary mb-2">
-            Welcome to Materio! 👋🏻
+            Seja bem-vindo! 👋🏻
           </p>
           <p class="mb-2">
-            Please sign-in to your account and start the adventure
+            Por favor, entre com suas credenciais.
           </p>
         </v-card-text>
 
         <!-- login form -->
         <v-card-text>
-          <v-form>
+          <v-form @submit.prevent="handleLogin">
             <v-text-field
-              v-model="email"
+              v-model="user.email"
               outlined
               label="Email"
-              placeholder="john@example.com"
+              placeholder="email@unieuro.edu.br"
               hide-details
               class="mb-3"
             ></v-text-field>
 
             <v-text-field
-              v-model="password"
+              v-model="user.password"
               outlined
               :type="isPasswordVisible ? 'text' : 'password'"
               label="Password"
@@ -58,7 +58,7 @@
 
             <div class="d-flex align-center justify-space-between flex-wrap">
               <v-checkbox
-                label="Remember Me"
+                label="Lembrar-me"
                 hide-details
                 class="me-3 mt-1"
               >
@@ -69,7 +69,7 @@
                 href="javascript:void(0)"
                 class="mt-1"
               >
-                Forgot Password?
+                Recuperar Senha?
               </a>
             </div>
 
@@ -77,8 +77,11 @@
               block
               color="primary"
               class="mt-6"
+              type="submit"
+              :loading="isLoading"
+              native-type="submit"
             >
-              Login
+              Entrar
             </v-btn>
           </v-form>
         </v-card-text>
@@ -86,33 +89,12 @@
         <!-- create new account  -->
         <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
           <span class="me-2">
-            New on our platform?
+            Novo por aqui?
           </span>
           <router-link :to="{name:'pages-register'}">
-            Create an account
+            Crie sua conta
           </router-link>
         </v-card-text>
-
-        <!-- divider -->
-        <v-card-text class="d-flex align-center mt-2">
-          <v-divider></v-divider>
-          <span class="mx-5">or</span>
-          <v-divider></v-divider>
-        </v-card-text>
-
-        <!-- social links -->
-        <v-card-actions class="d-flex justify-center">
-          <v-btn
-            v-for="link in socialLink"
-            :key="link.icon"
-            icon
-            class="ms-1"
-          >
-            <v-icon :color="$vuetify.theme.dark ? link.colorInDark : link.color">
-              {{ link.icon }}
-            </v-icon>
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </div>
 
@@ -142,50 +124,61 @@
 </template>
 
 <script>
-// eslint-disable-next-line object-curly-newline
-import { mdiFacebook, mdiTwitter, mdiGithub, mdiGoogle, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
+
+import { mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { ref } from '@vue/composition-api'
+import User from '../../models/users'
 
 export default {
-  setup() {
+  data() {
     const isPasswordVisible = ref(false)
     const email = ref('')
     const password = ref('')
-    const socialLink = [
-      {
-        icon: mdiFacebook,
-        color: '#4267b2',
-        colorInDark: '#4267b2',
-      },
-      {
-        icon: mdiTwitter,
-        color: '#1da1f2',
-        colorInDark: '#1da1f2',
-      },
-      {
-        icon: mdiGithub,
-        color: '#272727',
-        colorInDark: '#fff',
-      },
-      {
-        icon: mdiGoogle,
-        color: '#db4437',
-        colorInDark: '#db4437',
-      },
-    ]
 
     return {
       isPasswordVisible,
       email,
       password,
-      socialLink,
-
+      user: new User('', ''),
+      isLoading: false,
       icons: {
         mdiEyeOutline,
         mdiEyeOffOutline,
       },
     }
   },
+    computed: {
+    loggedIn () {
+      return this.$store.state.auth.status.loggedIn
+    }
+  },
+  created () {
+    if (this.loggedIn) {
+      this.$router.push('/')
+    }
+  },
+  methods: {
+    handleLogin () {
+      this.isLoading = true
+      console.log(this)
+        this.$store.dispatch('auth/login', this.user)
+          .then(() => {
+            this.$router.push('/')
+          },
+          error => {
+            this.isLoading = false
+            //console.log(error)
+            this.showCustomError('Não autorizado!')
+          })
+      
+    },
+    resetPassword () {
+      this.$router.push('/reset-password')
+    },
+    changePassword () {
+      this.$router.push('/changepassword')
+    }
+  }
 }
 </script>
 
