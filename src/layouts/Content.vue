@@ -15,27 +15,18 @@
             class="d-block d-lg-none me-2"
             @click="isDrawerOpen = !isDrawerOpen"
           ></v-app-bar-nav-icon>
-          <v-text-field
+          <!-- <v-text-field
             rounded
             dense
             outlined
             :prepend-inner-icon="icons.mdiMagnify"
             class="app-bar-search flex-grow-0"
             hide-details
-          ></v-text-field>
+          ></v-text-field> -->
 
           <v-spacer></v-spacer>
 
           <!-- Right Content -->
-          <a
-            href="https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free"
-            target="_blank"
-            rel="nofollow"
-          >
-            <v-icon class="ms-6 me-4">
-              {{ icons.mdiGithub }}
-            </v-icon>
-          </a>
           <theme-switcher></theme-switcher>
           <v-btn
             icon
@@ -68,28 +59,11 @@
       <div class="boxed-container w-full">
         <div class="mx-6 d-flex justify-space-between">
           <span>
-            &copy; 2021 <a
-              href="https://themeselection.com"
+            &copy; 2022 <a
+              href="mailto:michel.rosa@unieuro.edu.br"
               class="text-decoration-none"
               target="_blank"
-            >ThemeSelection</a></span>
-          <span class="d-sm-inline d-none">
-            <a
-              href="https://themeselection.com/products/category/download-free-admin-templates/"
-              target="_blank"
-              class="me-6 text--secondary text-decoration-none"
-            >Freebies</a>
-            <a
-              href="https://themeselection.com/blog/"
-              target="_blank"
-              class="me-6 text--secondary text-decoration-none"
-            >Blog</a>
-            <a
-              href="https://github.com/themeselection/materio-vuetify-vuejs-admin-template-free/blob/main/LICENSE"
-              target="_blank"
-              class="text--secondary text-decoration-none"
-            >MIT Licence</a>
-          </span>
+            >Nuted Unieuro</a></span>
         </div>
       </div>
     </v-footer>
