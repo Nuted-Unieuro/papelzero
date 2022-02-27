@@ -1,3 +1,10 @@
+<style scoped>
+.v-chip-expanded{
+  width: 90px;
+  align-content: center;
+  justify-content: center;
+}
+</style>
 <template>
   <v-data-table
     :headers="headers"
@@ -32,6 +39,7 @@
                 :color="getColorStatusExpanded(item.cod_status)"
                 dark
                 label
+                class='v-chip-expanded'
               >
                 {{ getTextStatusExpanded(item.cod_status) }}
               </v-chip>
@@ -61,6 +69,7 @@
           :color="getColorStatus(item.cod_status)"
           dark
           label
+          class='v-chip-expanded'
         >
           {{ getTextStatus(item.cod_status) }}
         </v-chip>
@@ -108,14 +117,16 @@ export default {
       headers: [
         
         { text: 'Título', value: 'titulo' },
-        { text: 'Emissão', value: 'created_at' },
+        { text: 'Departamento', value: 'nome_departamento' },
         { text: 'Responsável', value: 'name' },
-        { text: 'Status', value: 'cod_status' },
+        { text: 'Emissão', value: 'created_at' },
+        { text: 'Status', value: 'cod_status', align: 'center' },
         { text: 'Ações', value: 'actions', sortable: false },
         { text: 'Registros', value: 'data-table-expand' },
       ],
       headersExpanded: [        
         { text: 'Usuário', value: 'name' },
+        { text: 'Departamento', value: 'nome_departamento' },
         { text: 'Data e Hora da Ocorrência', value: 'dt_assinatura' },
         { text: 'Status', value: 'cod_status' },
         { text: 'Observações', value: 'observacao' },
