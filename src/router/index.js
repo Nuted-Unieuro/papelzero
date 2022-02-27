@@ -14,7 +14,12 @@ const routes = [
     component: () => import('@/views/dashboard/Dashboard.vue'),
   },
   {
-    path: '/processo',
+    path: '/novo-processo',
+    name: 'processo',
+    component: () => import('@/views/processo/NovoProcesso.vue'),
+  },
+  {
+    path: '/processos',
     name: 'processos',
     component: () => import('@/views/processo/Processo.vue'),
   },

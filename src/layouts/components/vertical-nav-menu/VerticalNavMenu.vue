@@ -43,6 +43,11 @@
         :icon="icons.mdiHomeOutline"
       ></nav-menu-link>
       <nav-menu-link
+        title="Criar Processo"
+        :to="{ name: 'processo'}"
+        :icon="icons.mdiFileDocument"
+      ></nav-menu-link>
+      <nav-menu-link
         title="Processos"
         :to="{ name: 'processos'}"
         :icon="icons.mdiFileDocumentMultiple"
@@ -115,6 +120,7 @@ import {
   mdiFormSelect,
   mdiAccountCogOutline,
   mdiFileDocumentMultiple,
+  mdiFileDocument,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -144,6 +150,7 @@ export default {
         mdiFormSelect,
         mdiAccountCogOutline,
         mdiFileDocumentMultiple,
+        mdiFileDocument,
       },
     }
   },

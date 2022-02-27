@@ -6,38 +6,71 @@
     :server-items-length="totalItens"
     :single-expand="singleExpand"
     :expanded.sync="expanded"
+    item-key="uuid"
     show-expand
     :loading="loading"
+    @item-expanded="getDataExpanded">
   >
+      <!-- Tabela de Assinaturas -->
       <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
+        <td :colspan="headers.length" item-key="uuid">
           <br>
           <v-data-table
             :headers="headersExpanded"
             :items="item.assinaturas"
             :colspan="headers.length"
             :items-per-page="5"
+            :options.sync="optionsExpanded"
+            :server-items-length="totalItensExpanded"
+            :loading="loadingExpanded"
+            item-key="item.id"
             class="elevation-10"
           >
-          <template v-slot:top>
-            <v-toolbar
-              flat
-            >
-            <v-toolbar-title>Registro de Assinaturas e Encaminhamentos</v-toolbar-title>
-            </v-toolbar>
-          </template>
-          <template v-slot:[`item.dt_assinatura`]="{ item }">
-            <span>{{ new Date(item.dt_assinatura).toLocaleString() }}</span>
-          </template>
-          
+            <!-- Template Colunas Status da Tabela de Assinaturas -->
+            <template v-slot:[`item.cod_status`]="{ item }">
+              <v-chip
+                :color="getColorStatusExpanded(item.cod_status)"
+                dark
+                label
+              >
+                {{ getTextStatusExpanded(item.cod_status) }}
+              </v-chip>
+            </template>
+            <!-- Cabeçalho da Tabela de Assinaturas -->
+            <template v-slot:top>
+              <v-toolbar flat>
+                <v-toolbar-title>Registro de Assinaturas e Encaminhamentos</v-toolbar-title>
+              </v-toolbar>
+            </template>
+            <!-- Formatação da coluna Data da Tabela de Assinaturas -->
+            <template v-slot:[`item.dt_assinatura`]="{ item }">
+              <span>{{ item.dt_assinatura != null ? new Date(item.dt_assinatura).toLocaleString() : "Aguardando Aprovação" }}</span>
+            </template>   
+            <!-- Template de formatação da coluna observação -->
+            <template v-slot:[`item.observacao`]="{ item }">
+            <span>{{ item.observacao != null ? item.observacao : "Não há!" }}</span>
+            </template>       
           </v-data-table>
           <br>
-        </td>
-         
+        </td>         
       </template>
+
+      <!-- Template Colunas Status -->
+      <template v-slot:[`item.cod_status`]="{ item }">
+        <v-chip
+          :color="getColorStatus(item.cod_status)"
+          dark
+          label
+        >
+          {{ getTextStatus(item.cod_status) }}
+        </v-chip>
+      </template>
+      <!-- Template de formatação da coluna emissão -->
       <template v-slot:[`item.created_at`]="{ item }">
        <span>{{ new Date(item.created_at).toLocaleString() }}</span>
       </template>
+
+      <!-- Template da coluna de ações -->
       <template v-slot:[`item.actions`]="{ item }">
         <v-icon
           small
@@ -58,29 +91,34 @@
 
 <script>
   import procesosService from '../../../services/processos.service'
+  import assinaturasService from '../../../services/assinaturas.service'
 export default {
   data () {
     return {
       expanded: [],
       singleExpand: true,
       totalItens: 0,
+      totalItensExpanded: 0,
       dados: [],
       loading: true,
+      loadingExpanded: true,
       options: {},
+      contextExpanded: null,
+      optionsExpanded: {},
       headers: [
         
         { text: 'Título', value: 'titulo' },
         { text: 'Emissão', value: 'created_at' },
-        { text: 'Hash', value: 'uuid' },
-        { text: 'Responsável', value: 'user.name' },
-        { text: 'Status', value: 'dt_encerramento' },
+        { text: 'Responsável', value: 'name' },
+        { text: 'Status', value: 'cod_status' },
         { text: 'Ações', value: 'actions', sortable: false },
-        { text: 'Assinaturas', value: 'data-table-expand' },
+        { text: 'Registros', value: 'data-table-expand' },
       ],
       headersExpanded: [        
-        { text: 'Usuário', value: 'user_id' },
-        { text: 'Data', value: 'dt_assinatura' },
-        { text: 'Status', value: 'status' }
+        { text: 'Usuário', value: 'name' },
+        { text: 'Data e Hora da Ocorrência', value: 'dt_assinatura' },
+        { text: 'Status', value: 'cod_status' },
+        { text: 'Observações', value: 'observacao' },
       ],
       dadosExpanded: []
     }
@@ -92,10 +130,89 @@ export default {
       },
       deep: true,
     },
+    optionsExpanded: {
+      handler () {
+          this.getDataExpanded(this.contextExpanded)
+      },
+      deep: true,
+    },
   },
   methods: {
-    getDataExpanded(item) {
-      console.log(item)
+    getDataExpanded({item}) {
+      this.loadingExpanded = true
+      const { sortBy, sortDesc, page, itemsPerPage } = this.optionsExpanded
+      if(item !== undefined){
+        if(this.contextExpanded !== null && item.id != this.contextExpanded.id){
+          this.optionsExpanded.page = 1;
+        }
+        this.contextExpanded = item
+      }
+      assinaturasService.assinaturasbyprocessos(this.optionsExpanded, this.contextExpanded)
+        .then((response) => {
+          if (response.data) {
+            this.contextExpanded.assinaturas = response.data.data
+            this.totalItensExpanded = response.data.total
+            this.loadingExpanded = false
+          }
+        }).catch((e) => {
+          console.log(e.message)
+          if (this.HTTP_UNAUTHORIZED === e.response.status ||
+              this.HTTP_FORBIDDEN === e.response.status) {
+            this.logout(e.response.status)
+          } else {
+            this.showError()
+          }
+        }).finally(() => {
+          this.isLoading = false
+        })
+    },
+    getColorStatus (status) {
+      switch(status){
+        case 0:
+          return '#4caf50'
+        case 1:
+          return '#ff9800'
+        case 2:
+          return '#f44336'
+      }
+    },
+    getTextStatus (status) {
+      switch(status){
+        case 0:
+          return 'Finalizado'
+        case 1:
+          return 'Pendente'
+        case 2:
+          return 'Indeferido'
+      }
+    },
+    getColorStatusExpanded (status) {
+      switch(status){
+        case 0:
+          return '#4caf50'
+        case 1:
+          return '#ff9800'
+        case 2:
+          return '#f44336'
+        case 3:
+          return '#ff9800'
+        case 4:
+          return '#4caf50'
+      }
+    },
+    getTextStatusExpanded (status) {
+      switch(status){
+        case 0:
+          return 'Assinado'
+        case 1:
+          return 'Assinar'
+        case 2:
+          return 'Indeferido'
+        case 3:
+          return 'Pendente'
+        case 4:
+          return 'Executado'
+      }
     },
     getDataFromApi () {
       this.loading = true
@@ -120,142 +237,6 @@ export default {
         }).finally(() => {
           this.isLoading = false
         })
-    },
-
-    editItem (item) {
-      this.editedIndex = this.dados.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
-    },
-
-    deleteItem (item) {
-      this.editedIndex = this.dados.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialogDelete = true
-    },
-
-    /**
-     * In a real application this would be a call to fetch() or axios.get()
-     */
-    fakeApiCall () {
-      return new Promise((resolve, reject) => {
-        const { sortBy, sortDesc, page, itemsPerPage } = this.options
-
-        let items = this.getDesserts()
-        const total = items.length
-
-        if (sortBy.length === 1 && sortDesc.length === 1) {
-          items = items.sort((a, b) => {
-            const sortA = a[sortBy[0]]
-            const sortB = b[sortBy[0]]
-
-            if (sortDesc[0]) {
-              if (sortA < sortB) return 1
-              if (sortA > sortB) return -1
-              return 0
-            } else {
-              if (sortA < sortB) return -1
-              if (sortA > sortB) return 1
-              return 0
-            }
-          })
-        }
-
-        if (itemsPerPage > 0) {
-          items = items.slice((page - 1) * itemsPerPage, page * itemsPerPage)
-        }
-
-        setTimeout(() => {
-          resolve({
-            items,
-            total,
-          })
-        }, 1000)
-      })
-    },
-    getDesserts () {
-      return [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24,
-          protein: 4.0,
-          iron: '1%',
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-          fat: 9.0,
-          carbs: 37,
-          protein: 4.3,
-          iron: '1%',
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-          fat: 16.0,
-          carbs: 23,
-          protein: 6.0,
-          iron: '7%',
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-          fat: 3.7,
-          carbs: 67,
-          protein: 4.3,
-          iron: '8%',
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-          fat: 16.0,
-          carbs: 49,
-          protein: 3.9,
-          iron: '16%',
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-          fat: 0.0,
-          carbs: 94,
-          protein: 0.0,
-          iron: '0%',
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-          fat: 0.2,
-          carbs: 98,
-          protein: 0,
-          iron: '2%',
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-          fat: 3.2,
-          carbs: 87,
-          protein: 6.5,
-          iron: '45%',
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-          fat: 25.0,
-          carbs: 51,
-          protein: 4.9,
-          iron: '22%',
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-          fat: 26.0,
-          carbs: 65,
-          protein: 7,
-          iron: '6%',
-        },
-      ]
     },
   },
 }
