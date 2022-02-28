@@ -117,8 +117,8 @@ export default {
       headers: [
         
         { text: 'Título', value: 'titulo' },
-        { text: 'Departamento', value: 'nome_departamento' },
         { text: 'Responsável', value: 'name' },
+        { text: 'Departamento', value: 'nome_departamento' },
         { text: 'Emissão', value: 'created_at' },
         { text: 'Status', value: 'cod_status', align: 'center' },
         { text: 'Ações', value: 'actions', sortable: false },
