@@ -37,11 +37,11 @@
       shaped
       class="vertical-nav-menu-items pr-5"
     >
-      <nav-menu-link
+      <!-- <nav-menu-link
         title="Dashboard"
         :to="{ name: 'dashboard' }"
         :icon="icons.mdiHomeOutline"
-      ></nav-menu-link>
+      ></nav-menu-link> -->
       <nav-menu-link
         title="Criar Processo"
         :to="{ name: 'processo'}"
@@ -52,7 +52,7 @@
         :to="{ name: 'processos'}"
         :icon="icons.mdiFileDocumentMultiple"
       ></nav-menu-link>
-      <nav-menu-link
+      <!-- <nav-menu-link
         title="Account Settings"
         :to="{ name: 'pages-account-settings'}"
         :icon="icons.mdiAccountCogOutline"
@@ -102,7 +102,7 @@
         title="Form Layouts"
         :to="{ name: 'form-layouts' }"
         :icon="icons.mdiFormSelect"
-      ></nav-menu-link>
+      ></nav-menu-link> -->
     </v-list>
 
   </v-navigation-drawer>
