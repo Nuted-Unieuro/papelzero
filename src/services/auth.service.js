@@ -18,6 +18,7 @@ class AuthService {
           // Vue database
           store.commit('user', {
                 cargo: response.data.user.cargo,
+                id: response.data.user.id,
                 cpf: response.data.user.cpf,
                 created_at: response.data.user.created_at,
                 email: response.data.user.email,

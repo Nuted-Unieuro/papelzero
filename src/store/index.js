@@ -11,6 +11,7 @@ export default new Vuex.Store({
   },
   state: {
     /* User */
+    id: null,
     cargo: null,
     cpf: null,
     created_at: null,

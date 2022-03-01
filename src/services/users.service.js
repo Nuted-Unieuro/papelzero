@@ -3,10 +3,14 @@ import apiRoot from './api-root'
 
 const API_URL = apiRoot()
 
-const API_BASE_URL = `${API_URL}api/departamentos`
+const API_BASE_URL = `${API_URL}api`
 class Service {
-  findAll () {
-    return axios.get(`${API_BASE_URL}`)
+  findUsersWithDepartments (query) {
+    return axios.get(`${API_BASE_URL}/users-departamentos/${query}`)
+  }
+
+  findAllUsersWithDepartments () {
+    return axios.get(`${API_BASE_URL}/all-users-departamentos/`)
   }
 
   findUserWithDepartament (data) {
