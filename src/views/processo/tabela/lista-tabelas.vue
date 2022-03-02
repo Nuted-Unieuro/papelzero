@@ -1,6 +1,6 @@
 <style scoped>
 .v-chip-expanded{
-  width: 90px;
+  width: 100px;
   align-content: center;
   justify-content: center;
 }
@@ -192,7 +192,7 @@ export default {
         case 0:
           return 'Finalizado'
         case 1:
-          return 'Pendente'
+          return 'Tramitação'
         case 2:
           return 'Indeferido'
       }

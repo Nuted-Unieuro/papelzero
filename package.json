@@ -39,9 +39,11 @@
     "apexcharts": "^3.27.3",
     "axios": "^0.26.0",
     "core-js": "^3.6.5",
+    "jodit-vue": "^2.4.0",
     "moment": "^2.29.1",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.6.2",
+    "vue-qrcode": "^1.0.0",
     "vue-router": "^3.2.0",
     "vuetify": "^2.4.0",
     "vuex": "^3.4.0"
