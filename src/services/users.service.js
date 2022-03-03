@@ -8,6 +8,9 @@ class Service {
   findUsersWithDepartments (query) {
     return axios.get(`${API_BASE_URL}/users-departamentos/${query}`)
   }
+  findUsersWithDepartmentsLogado (query) {
+    return axios.get(`${API_BASE_URL}/user-departamento-logado/${query}`)
+  }
 
   findAllUsersWithDepartments () {
     return axios.get(`${API_BASE_URL}/all-users-departamentos/`)

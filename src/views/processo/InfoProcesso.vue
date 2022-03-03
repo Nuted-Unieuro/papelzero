@@ -1,7 +1,7 @@
-<style scoped>
-.jodit_toolbar_popup-inline-target {
-    z-index: 99999 !important;
-}
+<style >
+    .jodit .jodit-wysiwyg {
+        background-color: #fff !important;
+    }
 </style>
 <template>
   <div>
@@ -39,6 +39,28 @@
                 </v-container>
             </v-expansion-panel-content>
         </v-expansion-panel>
+                <v-expansion-panel>
+            <v-expansion-panel-header>
+                <b>Processo</b>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+
+                <v-container>
+                    <v-row>
+                        <v-col cols="12">
+                            <div id="FaqEdit" v-bind:class="[joditContentIsEmpty ? 'force-is-danger' : '']">
+                                <jodit-editor
+                                    v-model.trim="joditContent"
+                                    :buttons="buttons"
+                                    :config="config"
+                                />
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-container>          
+                        
+            </v-expansion-panel-content>
+        </v-expansion-panel>
         <v-expansion-panel>
             <v-expansion-panel-header>
                 <b>Assinaturas e Encaminhamentos</b>
@@ -47,7 +69,7 @@
 
                 <v-container>
                     <v-row>
-                        <v-col cols="6">
+                        <v-col cols="12" sm="12" md="6">
                             <v-autocomplete
                                 v-model="usersSelected"
                                 :loading="isLoading"
@@ -55,10 +77,11 @@
                                 :search-input.sync="getUsers"
                                 hide-no-data
                                 hide-selected
-                                cache-items
                                 item-value='id'
                                 class="mx-4"
                                 chips
+                                @change="changeComboAssinaturas()"
+                                :disable-lookup="true"
                                 clearable
                                 deletable-chips
                                 label="Buscar usuários para ASSINAR o processo"
@@ -70,10 +93,10 @@
                                         <template v-slot:activator="{ on, attrs }">
                                             <v-chip
                                                 :input-value="data.selected"
-                                                close
+                                                :close="data.item.user_id !== dadosDepartamentos[0].id"
                                                 v-bind="attrs"
                                                 v-on="on"
-                                                @click:close="remove(data.item)"
+                                                @click:close="data.item.user_id !== dadosDepartamentos[0].id ? remove(data.item) : ''"
                                                 @click="data.select"
                                             >
                                                 {{ data.item.name }}
@@ -92,7 +115,7 @@
                                 </template>
                             </v-autocomplete>
                         </v-col>
-                        <v-col cols="6">
+                        <v-col cols="12" sm="12" md="6">
                             <v-autocomplete
                                 v-model="usersSelectedAcp"
                                 :loading="isLoadingAcp"
@@ -100,7 +123,6 @@
                                 :search-input.sync="getUsersAcp"
                                 hide-no-data
                                 hide-selected
-                                cache-items
                                 item-value="id"
                                 class="mx-4"
                                 chips
@@ -144,22 +166,50 @@
         </v-expansion-panel>
         <v-expansion-panel>
             <v-expansion-panel-header>
-                <b>Processo</b>
+                <b>Submeter Processo</b>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
 
                 <v-container>
                     <v-row>
-                        <v-col cols="12">
-                            <div id="FaqEdit" v-bind:class="[joditContentIsEmpty ? 'force-is-danger' : '']">
-                                <jodit-editor
-                                    v-model.trim="joditContent"
-                                    :buttons="buttons"
-                                    :config="config"
-                                />
-                            </div>
+                        <v-col cols="3">
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <div v-on="on" v-bind="attrs">
+                                        <v-switch
+                                            v-model="sigilo"
+                                            label="Processo Confidencial"
+                                            color="#f44336"
+                                            :value="sigilo = sigilo ? true : false"
+                                            hide-details
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            >
+                                        </v-switch>
+                                    </div>                                    
+                                </template>
+                                <span>Se habilitado, somente usuários autenticados que participam do processo podem visualizar.</span>
+                            </v-tooltip>
                         </v-col>
                     </v-row>
+                    <v-row>
+                        <v-col cols="4">
+                            <v-btn
+                                class="ma-2"
+                                :loading="loadSubmit"
+                                :disabled="loadSubmit"
+                                color="info"
+                                @click="submeterProcesso()"
+                                >
+                                Registrar Processo
+                                <template v-slot:loaderSubmit>
+                                    <span class="custom-loader">
+                                    <v-icon light>mdi-cached</v-icon>
+                                    </span>
+                                </template>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
                 </v-container>          
                         
             </v-expansion-panel-content>
@@ -170,6 +220,7 @@
 
 <script>
     import usuariosService from '../../services/users.service'
+    import processosService from '../../services/processos.service'
     import gerarAssinatura from '../../services/gerarAssinatura.service'
     import 'jodit/build/jodit.min.css'
     import { JoditEditor } from 'jodit-vue'
@@ -179,13 +230,16 @@
         },
         data() {
             return {
-                panel: [2],
+                panel: [3],
+                sigilo: false,
                 nomeUsuario: this.$store.state.auth.user.name,
                 dadosDepartamentos: [],
                 primeiroDept: null,
                 getUsers: null,
                 dadosUsuarios: [],
                 usersSelected: [],
+                cacheAssinaturas: [],
+                cacheAssinaturasAcp: [],
                 isLoading: false,
                 getUsersAcp: null,
                 dadosUsuariosAcp: [],
@@ -207,12 +261,20 @@
                 },
                 processo: {
                     numeroProcesso: '87a3e041-c41a-54ad-e340-7ed9e859cb77'
-                }
+                },
+                templateInit: {
+                    confidencial: require('@/assets/images/confidencial.svg')
+                },
+                loadSubmit: false,
+                loaderSubmit: null,
+                userLogadoAssintaura: []
             }
         },
         mounted() {
             this.getDepartamentosByUser()
+            this.getUsuarioLogadoAssinatura(this.$store.state.auth.user.id)
             this.gerarAssinatura()
+
         },
         watch: {
             getUsers (val) {
@@ -227,13 +289,81 @@
                 } else {
                     this.joditContentIsEmpty = false
                 }
-            }
+            },
+            usersSelected (newSelectedArray, oldSelectedArray) {
+                this.pushOrRemoveAssinaturas(newSelectedArray)
+            },
+            usersSelectedAcp (newSelectedArray, oldSelectedArray) {
+                this.pushOrRemoveAssinaturasAcp(newSelectedArray)
+            },
         },
         methods:{
+            changeComboAssinaturas () {
+                console.log(this.userLogadoAssintaura, 'paga1')
+                this.usersSelected.filter(obj1 => obj1==this.userLogadoAssintaura[0].id).length > 0 ? this.usersSelected : this.usersSelected.push(this.userLogadoAssintaura[0].id)
+            },
+            submeterProcesso() {
+                this.loaderSubmit = 'loadSubmit'
+                const l = this.loaderSubmit
+                this[l] = !this[l]
+                this.loadSubmit = false
+                this.createProcess()
+                this.loaderSubmit = null
+
+            },
+            createProcess(){
+                console.log('conteudo processo')
+                console.log(this.joditContent)
+                console.log('assinantes')
+                console.log(this.cacheAssinaturas)
+                console.log('acompanhantes')
+                console.log(this.cacheAssinaturasAcp)
+                console.log("sigilo")
+                console.log(this.sigilo)
+                console.log("responsavel")
+                console.log(this.userLogadoAssintaura)
+                let dadosProcessos = {}
+                dadosProcessos.conteudo = this.joditContent
+                dadosProcessos.assinantes = this.cacheAssinaturas
+                dadosProcessos.observadores = this.cacheAssinaturasAcp
+                dadosProcessos.sigilo = this.sigilo
+                dadosProcessos.solicitante = this.userLogadoAssintaura
+                console.log(dadosProcessos)
+                processosService.save(dadosProcessos)
+                    .then((response) => {
+                        console.log(response)
+                    if (this.HTTP_CREATED === response.status || this.HTTP_OK === response.status) {
+                        this.showSuccess()
+                    }
+                    }).catch((e) => {
+                    this.handleError(e)
+                    }).finally(() => {
+                    this.isLoading = false
+                    })
+            },
+            pushOrRemoveAssinaturas(dados){
+                this.cacheAssinaturas =  this.dadosUsuarios.filter(obj1 => dados.find(obj2 => obj1.id===obj2));
+                console.log('array cache')
+                console.log(dados)
+                console.log(this.dadosUsuarios)
+                console.log(this.cacheAssinaturas)
+            },
+            pushOrRemoveAssinaturasAcp(dados){
+                this.cacheAssinaturasAcp =  this.dadosUsuariosAcp.filter(obj1 => dados.find(obj2 => obj1.id===obj2));
+                console.log('array cache')
+                console.log(dados)
+                console.log(this.dadosUsuariosAcp)
+                console.log(this.cacheAssinaturasAcp)
+            },
             gerarAssinatura(){
+                this.joditContent = this.joditContent.concat(gerarAssinatura.geradorConfidencial(this.templateInit))
                 this.joditContent = this.joditContent.concat(gerarAssinatura.geradorCabecalho(this.processo))
                 this.joditContent = this.joditContent.concat(gerarAssinatura.geradorTemplate())
                 this.joditContent = this.joditContent.concat(gerarAssinatura.geradorAssinatura(this.assinatura))
+                this.assinatura.nomeUsuario = "Juliana Patricia Ferraz de Souza"
+                this.assinatura.cargoUsuario = "Pró-reitora Acadêmica"
+                this.assinatura.departamentoUsuario = "Reitoria"
+                this.assinatura.dataAssinatura = "2022-03-02T17:42:50.000000Z"
                 this.joditContent = this.joditContent.concat(gerarAssinatura.geradorAssinatura(this.assinatura))
                 this.joditContent = this.joditContent.concat(gerarAssinatura.geradorQrCode(this.processo))
                 this.joditContent = this.joditContent.concat(gerarAssinatura.geradorReferencia(this.processo))
@@ -243,8 +373,32 @@
                 usuariosService.findUsersWithDepartments(query)
                 .then((response) => {
                     if (response.data) {
+                        response.data =  response.data.filter(obj1 => !this.usersSelected.find(obj2 => obj1.id===obj2));
                         this.dadosUsuarios = response.data
+                        this.dadosUsuarios = this.dadosUsuarios.concat(this.cacheAssinaturas)
                         console.log('entrou', this.dadosUsuarios)
+                    }
+                }).catch((e) => {
+                    console.log(e.message)
+                    if (this.HTTP_UNAUTHORIZED === e.response.status ||
+                        this.HTTP_FORBIDDEN === e.response.status) {
+                        this.logout(e.response.status)
+                    } else {
+                        this.showError()
+                    }
+                }).finally(() => {
+                    this.isLoading = false
+                })
+            },
+            getUsuarioLogadoAssinatura(query){
+                this.isLoading = true
+                usuariosService.findUsersWithDepartmentsLogado(query)
+                .then((response) => {
+                    if (response.data) {
+                        this.userLogadoAssintaura = response.data
+                        this.dadosUsuarios = response.data
+                        this.cacheAssinaturas = this.dadosUsuarios
+                        this.usersSelected = [response.data[0].id]
                     }
                 }).catch((e) => {
                     console.log(e.message)
@@ -263,8 +417,9 @@
                 usuariosService.findUsersWithDepartments(query)
                 .then((response) => {
                     if (response.data) {
+                        response.data =  response.data.filter(obj1 => !this.usersSelectedAcp.find(obj2 => obj1.id===obj2));
                         this.dadosUsuariosAcp = response.data
-                        console.log('entrou', this.dadosUsuarios)
+                        this.dadosUsuariosAcp = this.dadosUsuariosAcp.concat(this.cacheAssinaturasAcp)
                     }
                 }).catch((e) => {
                     console.log(e.message)

@@ -229,7 +229,7 @@ export default {
       this.loading = true
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
       console.log(this.options)
-      procesosService.findAll(this.options)
+      procesosService.processoByUsuario(this.options, this.$store.state.auth.user.id)
         .then((response) => {
           console.log(response)
           if (response.data) {

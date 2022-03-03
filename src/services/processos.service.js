@@ -3,10 +3,14 @@ import apiRoot from './api-root'
 
 const API_URL = apiRoot()
 
-const API_BASE_URL = `${API_URL}api/processos`
+const API_BASE_URL = `${API_URL}api`
 class Service {
   findAll (data) {
-    return axios.get(`${API_BASE_URL}?page=${data.page}`)
+    return axios.get(`${API_BASE_URL}/processos?page=${data.page}`)
+  }
+
+  processoByUsuario (data, query) {
+    return axios.get(`${API_BASE_URL}/processobyusuario/${query}?page=${data.page}`)
   }
 
   findAllByConnectedUser () {
@@ -41,7 +45,7 @@ class Service {
   }
 
   create (data) {
-    return axios.post(API_BASE_URL, data, { headers: authHeader() })
+    return axios.post(`${API_BASE_URL}/processos`, data)
   }
 
   update (data, id) {

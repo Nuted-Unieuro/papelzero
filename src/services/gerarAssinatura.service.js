@@ -1,22 +1,37 @@
 class Service {
     geradorAssinatura (data) {
-    let dataAssinatura = new Date(data.dataAssinatura).toLocaleString()
-    dataAssinatura = dataAssinatura.replace(' ', ', às ')
-    console.log(data)
-    const assinatura =
-      `<p class="MsoNormal" style="margin: 0px; break-after: avoid; font-size: 0px; font-family: &quot;Times New Roman&quot;, serif; text-indent: 0px; text-align: center;"><span style="color: black; font-family: &quot;Century Gothic&quot;, sans-serif; font-size: 0px; letter-spacing: 0em;"><br></span></p>
-      <hr>
-      <table style="width: 100%;">
-          <tbody>
-              <tr>
-                  <td style="width: 8%; border-color: rgb(255, 255, 255);"><img src="${data.fingerprint}" alt="" width="64" height="93"></td>
-                  <td style="width: 2%; border-color: rgb(255, 255, 255);"><br></td>
-                  <td style="width: 90%; color: rgb(0, 0, 0); border-color: rgb(255, 255, 255);">Documento assinado eletronicamente por <strong>${data.nomeUsuario}</strong>, <strong>${data.cargoUsuario} - ${data.departamentoUsuario}</strong>, em ${dataAssinatura}, conforme horário oficial de Brasília, com fundamento na Instrução da Reitoria 0001/2022 do Centro Universitário Unieuro.</td>
-              </tr>
-          </tbody>
-      </table>`
-
-      return assinatura
+        let dataAssinatura = new Date(data.dataAssinatura).toLocaleString()
+        dataAssinatura = dataAssinatura.replace(' ', ', às ')
+        const assinatura =
+            `<p class="MsoNormal" style="margin: 0px; break-after: avoid; font-size: 0px; font-family: &quot;Times New Roman&quot;, serif; text-indent: 0px; text-align: center;">
+                <span style="color: black; font-family: &quot;Century Gothic&quot;, sans-serif; font-size: 0px; letter-spacing: 0em;">
+                    <br>
+                </span>
+            </p>
+            <hr>
+            <table style="width: 100%;">
+                <tbody>
+                <tr>
+                        <td style="width: 8%; border-color: rgba(255, 255, 255, 0);">
+                            <img src="${data.fingerprint}" alt="" width="64" height="93">
+                        </td>
+                        <td style="width: 2%; border-color: rgba(255, 255, 255, 0);">
+                            <br>
+                        </td>
+                        <td style="width: 90%; color: rgb(0, 0, 0); border-color: rgba(255, 255, 255, 0);">
+                            Documento assinado eletronicamente por 
+                            <strong>
+                                ${data.nomeUsuario}
+                            </strong>, 
+                            <strong>
+                                ${data.cargoUsuario} - ${data.departamentoUsuario}
+                            </strong>
+                            , em ${dataAssinatura}, conforme horário oficial de Brasília, com fundamento na Instrução da Reitoria 0001/2022 do Centro Universitário Unieuro.
+                        </td>
+                </tr>
+                </tbody>
+            </table>`
+        return assinatura
     }
     geradorQrCode (data) {
         const assinatura =
@@ -25,9 +40,9 @@ class Service {
         <table style="width: 100%;">
             <tbody>
                 <tr>
-                    <td style="width: 18%; border-color: rgb(255, 255, 255);"><img src="https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=${data.numeroProcesso}" alt="" width="150" height="150"></td>
-                    <td style="width: 2%; border-color: rgb(255, 255, 255);"><br></td>
-                    <td style="width: 80%; color: rgb(0, 0, 0); border-color: rgb(255, 255, 255);">
+                    <td style="width: 18%; border-color: rgba(255, 255, 255, 0);"><img src="https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=${data.numeroProcesso}" alt="" width="150" height="150"></td>
+                    <td style="width: 2%; border-color: rgba(255, 255, 255, 0);"><br></td>
+                    <td style="width: 80%; color: rgb(0, 0, 0); border-color: rgba(255, 255, 255, 0);">
                     A autenticidade deste documento poder ser conferida no site do Centro Universitário Euro-Americano - UNIEURO http://validador.xxxxxxx, informando o número da referência:<br> <strong> ${data.numeroProcesso} </strong>.</td>
                 </tr>
             </tbody>
@@ -37,21 +52,23 @@ class Service {
     }
     geradorReferencia (data) {
     const assinatura =
-      `<p class="MsoNormal" style="margin: 0px; break-after: avoid; font-size: 0px; font-family: &quot;Times New Roman&quot;, serif; text-indent: 0px; text-align: center;">
-        <span style="color: black; font-family: &quot;Century Gothic&quot;, sans-serif; font-size: 0px; letter-spacing: 0em;">
-            <br>
-        </span></p>
-        <hr>
-        <p style="width: 90%; color: rgb(0, 0, 0);">
-            <span>
-                <strong>
-                    <br>
-                </strong>
+        `<p class="MsoNormal" style="margin: 0px; break-after: avoid; font-size: 0px; font-family: &quot;Times New Roman&quot;, serif; text-indent: 0px; text-align: center;">
+            <span style="color: black; font-family: &quot;Century Gothic&quot;, sans-serif; font-size: 0px; letter-spacing: 0em;">
+                <br>
             </span>
-            <td style="width: 99.8834%; border-color: rgb(255, 255, 255); text-align: right; color: rgb(0, 0, 0);" colspan="3">
-            <pre><span style="font-size: 12px;"><strong>Referência n°:</strong> ${data.numeroProcesso} </span></pre>
-        </td>  
-        </p>`
+        </p>
+        <hr>
+        <table style="width: 100%;">
+            <tbody>
+                <tr>
+                    <td style="width: 99.8834%; border-color: rgba(255, 255, 255, 0); text-align: right; color: rgb(0, 0, 0);" colspan="3">
+                        <pre><span style="font-size: 12px; color: black;"><strong>Referência n°:</strong> ${data.numeroProcesso} </span></pre>
+                    </td>       
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        `
       return assinatura
     }
     geradorCabecalho (data) {
@@ -59,15 +76,15 @@ class Service {
         `<table style="width: 100%;">
             <tbody>
                 <tr>
-                    <td style="width: 99.8834%; border-color: rgb(255, 255, 255); text-align: right; color: rgb(0, 0, 0);" colspan="3">
-                        <pre><span style="font-size: 12px;"><strong>Referência n°:</strong> ${data.numeroProcesso} </span></pre>
+                    <td style="width: 99.8834%; border-color: rgba(255, 255, 255, 0); text-align: right; color: rgb(0, 0, 0);" colspan="3">
+                        <pre><span style="font-size: 12px; color: black;"><strong>Referência n°:</strong> ${data.numeroProcesso} </span></pre>
                     </td>       
                 </tr>
                 <tr>
-                    <td style="width: 13.986%; border-color: rgb(255, 255, 255);"><img src="${require('@/assets/images/logos/unieuro.png')}" alt="" width="102" height="101"></td>
-                    <td style="width: 1.3986%; border-color: rgb(255, 255, 255);"><br></td>
-                    <td style="width: 84.6154%; text-align: center; border-color: rgb(255, 255, 255);">
-                        <h2><span style="font-family: Arial, Helvetica, sans-serif;">Centro Universitário Euro-Americano - UNIEURO</span></h2>
+                    <td style="width: 13.986%; border-color: rgba(255, 255, 255, 0);"><img src="${require('@/assets/images/logos/unieuro.png')}" alt="" width="102" height="101"></td>
+                    <td style="width: 1.3986%; border-color: rgba(255, 255, 255, 0);"><br></td>
+                    <td style="width: 84.6154%; text-align: center; border-color: rgba(255, 255, 255, 0);">
+                        <h2><span style="font-family: Arial, Helvetica, sans-serif; color: black;">Centro Universitário Euro-Americano - UNIEURO</span></h2>
                     </td>
                 </tr>
             </tbody>
@@ -76,10 +93,26 @@ class Service {
         `
       return assinatura
     }
+    geradorConfidencial (data) {
+    const assinatura =
+        `<div style="background-image: url('${data.confidencial}'); background-repeat: repeat;">
+            <table style="width: 100%;">
+                <tbody>
+                    <tr>
+                        <td style="width: 100%; background-color: rgb(0, 0, 0);">
+
+                            <p style="text-align: center;"><span style="color: rgb(255, 255, 255);"><strong style="font-size: 24px;">PROCESSO CONFIDENCIAL</strong></span></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `
+      return assinatura
+    }
     geradorTemplate (data) {
     const assinatura =
-      `<h3 style="break-after: avoid; font-size: 19px; font-family: &quot;Times New Roman&quot;, serif; color: black; margin: 8px 0px 15px; text-indent: 0px;"><span style="font-size: 17px; font-family: Tahoma, sans-serif;">MEMO nº 002/2021
-      </span><span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="font-size: 17px; font-family: Tahoma, sans-serif;">Curso de
+      `<h3 style="break-after: avoid; font-size: 19px; font-family: &quot;Times New Roman&quot;, serif; color: black; margin: 8px 0px 15px; text-indent: 0px;"><span style="font-size: 17px; font-family: Tahoma, sans-serif; color: black;">MEMO nº 001/2022
+      </span><span style="mso-tab-count:1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="font-size: 17px; font-family: Tahoma, sans-serif; color: black;">Curso de
           Bacharelado em Sistemas de Informação</span></h3>
   
   <p class="MsoNormal" style="break-after: avoid; font-size: 16px; font-family: &quot;Times New Roman&quot;, serif; margin: 4px 0px;"><span style="font-size: 8px; font-family: &quot;Century Gothic&quot;, sans-serif; color: black;">&nbsp;</span></p>
@@ -208,7 +241,8 @@ class Service {
   <p class="MsoNormal" align="center" style="margin: 0px 0px 0px 48px; break-after: avoid; font-size: 16px; font-family: &quot;Times New Roman&quot;, serif; text-align: center;"><span style="font-size: 15px; font-family: &quot;Century Gothic&quot;, sans-serif; color: black;"><span style="mso-spacerun:yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>3802 - Michel Junio Ferreira
           Rosa<span style="mso-spacerun:yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><br>
       <span style="font-size: 15px; font-family: &quot;Century Gothic&quot;, sans-serif; color: black;">Coordenação de Sistemas de Informação</span>
-  </p>`
+  </p>
+  <br>`
       return assinatura
     }
   }
