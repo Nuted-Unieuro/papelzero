@@ -230,7 +230,7 @@
         },
         data() {
             return {
-                panel: [3],
+                panel: [0],
                 sigilo: false,
                 nomeUsuario: this.$store.state.auth.user.name,
                 dadosDepartamentos: [],
