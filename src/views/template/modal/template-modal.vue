@@ -73,17 +73,18 @@
           >
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Criar Novo Template</v-toolbar-title>
+          <v-toolbar-title> {{ titleModal }} </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-btn
+              v-if="!disabled"
               text
               @click="saveTemplate"
               class="mt-3"
               :loading="loading"
               :disabled="loading"
             >
-              Criar Template
+              {{buttonModal}}
             </v-btn>
           </v-toolbar-items>
         </v-toolbar>
@@ -112,12 +113,14 @@
                 v-model="nomeTemplate"
                 :counter="50"
                 label="Nome do Template"
+                :disabled="disabled"
                 required
               ></v-text-field>
               </v-col>
               <v-col cols="2">
                 <v-switch
                   v-model="viewTemplate"
+                  :disabled="disabled"
                   :label="`Habilitar Template?`"
               ></v-switch>
               </v-col>
@@ -130,6 +133,7 @@
                       v-model.trim="joditContent"
                       :buttons="buttons"
                       :config="config"
+                      readonly: true
                   />
               </div>
             </v-list-item-content>
@@ -147,9 +151,20 @@
       components: {
       JoditEditor
     },
+     props: {
+      item: {
+        type: Object
+      },
+      editItem: {
+        type: Boolean
+      },
+      viewItem: {
+        type: Boolean
+      }
+    }, 
     data () {
       return {
-        dialog: false,
+        dialog: this.editItem,
         nomeTemplate: null,
         joditContent:"",
         config: this.getDefaultJoditConfigTemplate(),
@@ -162,9 +177,56 @@
         textErroAlert: null,
         typeErroAlert: null,
         viewTemplate: true,
+        titleModal: 'Criar Novo Template',
+        buttonModal: 'Criar Template',
+        disabled: true
       }
     },
-    methods: {
+    created() {
+      console.log('created', this.editItem,this.item)
+      if (this.editItem) {
+        this.nomeTemplate = this.item.descricao
+        this.joditContent = this.item.template
+        this.id = this.item.id_template
+        this.viewTemplate = this.item.visible
+        this.titleModal = "Editar Template"
+        this.buttonModal = "Editar Template",
+        this.disabled = false
+      }
+      if (this.viewItem) {
+        this.nomeTemplate = this.item.descricao
+        this.joditContent = this.item.template
+        this.id = this.item.id_template
+        this.viewTemplate = this.item.visible
+        this.titleModal = "Visualizar Template"
+        this.buttonModal = "Editar Template",
+        this.disabled = true
+        this.config.readonly = this.disabled
+      }
+    },
+    watch: {
+      dialog(visible) {
+        if (visible) {
+          console.log(this.editItem, this.viewItem,'tse')
+          this.nomeTemplate = null
+          this.joditContent = ""
+          this.id = null
+          this.viewTemplate = true
+          this.titleModal = "Criar Novo Template"
+          this.buttonModal = "Criar Template"
+          this.erroAlert = false
+          this.disabled = false
+          console.log("Dialog was opened!")
+          
+        } else {
+          console.log("Dialog was closed!")
+        }
+      }
+      },
+    methods: {      
+      reset () {
+        this.dialog = false
+      },
       saveTemplate(){
         this.loading = true
         this.erroAlert = false

@@ -83,7 +83,7 @@ Vue.mixin({
       return {
         language: locale,
         width: 'auto',
-        height: '450',
+        height: '400',
         theme: "summer",
         zIndex: 9999,
         toolbarButtonSize: 'small',

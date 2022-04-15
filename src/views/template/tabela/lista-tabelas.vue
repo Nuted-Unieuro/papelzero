@@ -26,10 +26,11 @@
       </template>
 
       <template v-slot:top>
+          <modalTemplateDrop v-bind:item="item" v-bind:deleteItem="deleteItem" :key="keyItemDelete"></modalTemplateDrop>
         <v-toolbar flat>
           <v-toolbar-title>Lista de Templates</v-toolbar-title>
           <v-spacer></v-spacer>
-          <modalTemplates></modalTemplates>
+          <modalTemplates v-bind:item="item" v-bind:editItem="editItem" v-bind:viewItem="viewItem" :key="keyItem"></modalTemplates>
         </v-toolbar>
       </template>
 
@@ -51,19 +52,47 @@
 
       <!-- Template da coluna de ações -->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon
-          small
-          class="mr-2"
-          @click="editItem(item)"
-        >
-          mdi-pencil
-        </v-icon>
-        <v-icon
-          small
-          @click="deleteItem(item)"
-        >
-          mdi-eye
-        </v-icon>
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs}">
+            <v-icon
+              small
+              class="mr-2"
+              v-bind="attrs"
+              v-on="on"
+              @click="viewTemplate(item)"
+            >
+              mdi-eye
+            </v-icon>
+          </template>
+          <span>Visualizar Template</span>
+        </v-tooltip>
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs}">
+            <v-icon
+              small
+              class="mr-2"
+              v-bind="attrs"
+              v-on="on"
+              @click="editTemplate(item)"
+            >
+              mdi-pencil
+            </v-icon>
+          </template>
+            <span>Editar Template</span>
+        </v-tooltip>
+        <v-tooltip left>
+          <template v-slot:activator="{ on, attrs}">
+            <v-icon
+              small
+              v-bind="attrs"
+                  v-on="on"
+              @click="deleteTemplate(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>
+            <span>Excluir Template</span>
+        </v-tooltip>
       </template>
   </v-data-table>
 </template>
@@ -74,10 +103,12 @@
   import 'jodit/build/jodit.min.css'
   import { JoditEditor } from 'jodit-vue'
   import modalTemplates from '../modal/template-modal.vue'
+  import modalTemplateDrop from '../modal/template-modal-drop.vue'
 export default {
   components: {
       JoditEditor,
-      modalTemplates
+      modalTemplates,
+      modalTemplateDrop
   },
   data () {
     return {
@@ -93,6 +124,12 @@ export default {
       optionsExpanded: {},
       config: this.getDefaultJoditConfig(),
       buttons: this.getDefaultJoditButtons(),
+      item: null,
+      editItem:false,
+      deleteItem:false,
+      viewItem:false,
+      keyItem: 0,
+      keyItemDelete: 1500,
       headers: [
         
         { text: 'Descrição', value: 'descricao' },
@@ -224,6 +261,29 @@ export default {
         }).finally(() => {
           this.isLoading = false
         })
+    },
+    editTemplate (item) {
+      this.item = item
+      this.keyItem++
+      this.editItem = true
+      this.viewItem = false
+      console.log(item)
+      //this.$refs.modalTemplates.dialog=true
+    },
+    deleteTemplate (item) {
+      this.item = item
+      this.keyItemDelete++
+      this.deleteItem = true
+      console.log(item)
+      //this.$refs.modalTemplates.dialog=true
+    },
+    viewTemplate (item) {
+      this.item = item
+      this.keyItem++
+      this.viewItem = true
+      this.editItem = true
+      console.log(item)
+      //this.$refs.modalTemplates.dialog=true
     },
   },
 }

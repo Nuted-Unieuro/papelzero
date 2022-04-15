@@ -53,7 +53,7 @@ class Service {
   }
 
   deleteById (id) {
-    return axios.delete(`${API_BASE_URL}/${id}`)
+    return axios.delete(`${API_BASE_URL}/templates/${id}`)
   }
 }
 
