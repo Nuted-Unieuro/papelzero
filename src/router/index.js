@@ -24,6 +24,11 @@ const routes = [
     component: () => import('@/views/processo/Processo.vue'),
   },
   {
+    path: '/templates',
+    name: 'templates',
+    component: () => import('@/views/template/Template.vue'),
+  },
+  {
     path: '/typography',
     name: 'typography',
     component: () => import('@/views/typography/Typography.vue'),

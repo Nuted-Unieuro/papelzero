@@ -52,6 +52,11 @@
         :to="{ name: 'processos'}"
         :icon="icons.mdiFileDocumentMultiple"
       ></nav-menu-link>
+      <nav-menu-link
+        title="Templates"
+        :to="{ name: 'templates'}"
+        :icon="icons.mdiTableEdit"
+      ></nav-menu-link>
       <!-- <nav-menu-link
         title="Account Settings"
         :to="{ name: 'pages-account-settings'}"
@@ -121,6 +126,7 @@ import {
   mdiAccountCogOutline,
   mdiFileDocumentMultiple,
   mdiFileDocument,
+  mdiTableEdit
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -151,6 +157,7 @@ export default {
         mdiAccountCogOutline,
         mdiFileDocumentMultiple,
         mdiFileDocument,
+        mdiTableEdit
       },
     }
   },
