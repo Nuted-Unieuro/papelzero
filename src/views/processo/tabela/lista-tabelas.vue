@@ -18,6 +18,13 @@
     :loading="loading"
     @item-expanded="getDataExpanded">
   >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title>Lista de Processos</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <modalProcessos persistent @keydown.esc="dialog = true" v-bind:item="item" v-bind:editItem="editItem" v-bind:viewItem="viewItem" :key="keyItem"></modalProcessos>
+        </v-toolbar>
+      </template>
       <!-- Tabela de Assinaturas -->
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length" item-key="uuid">
@@ -90,7 +97,7 @@
         </v-icon>
         <v-icon
           small
-          @click="deleteItem(item)"
+          @click="viewTemplate(item)"
         >
           mdi-eye
         </v-icon>
@@ -101,7 +108,11 @@
 <script>
   import procesosService from '../../../services/processos.service'
   import assinaturasService from '../../../services/assinaturas.service'
+  import modalProcessos from './processo-view-modal.vue'
 export default {
+  components: {
+      modalProcessos
+  },
   data () {
     return {
       expanded: [],
@@ -114,6 +125,11 @@ export default {
       options: {},
       contextExpanded: null,
       optionsExpanded: {},
+      item: null,
+      editItem:false,
+      viewItem:false,
+      keyItem: 0,
+      keyItemDelete: 1500,
       headers: [
         
         { text: 'Título', value: 'titulo' },
@@ -248,6 +264,14 @@ export default {
         }).finally(() => {
           this.isLoading = false
         })
+    },
+    viewTemplate (item) {
+      this.item = item
+      this.keyItem++
+      this.viewItem = true
+      this.editItem = true
+      console.log(item)
+      //this.$refs.modalTemplates.dialog=true
     },
   },
 }

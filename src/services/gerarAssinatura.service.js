@@ -40,10 +40,10 @@ class Service {
         <table style="width: 100%;">
             <tbody>
                 <tr>
-                    <td style="width: 18%; border-color: rgba(255, 255, 255, 0);"><img src="https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=${data.numeroProcesso}" alt="" width="150" height="150"></td>
+                    <td style="width: 18%; border-color: rgba(255, 255, 255, 0);"><img src="https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=${data.uuid}" alt="" width="150" height="150"></td>
                     <td style="width: 2%; border-color: rgba(255, 255, 255, 0);"><br></td>
                     <td style="width: 80%; color: rgb(0, 0, 0); border-color: rgba(255, 255, 255, 0);">
-                    A autenticidade deste documento poder ser conferida no site do Centro Universitário Euro-Americano - UNIEURO http://validador.xxxxxxx, informando o número da referência:<br> <strong> ${data.numeroProcesso} </strong>.</td>
+                    A autenticidade deste documento poder ser conferida no site do Centro Universitário Euro-Americano - UNIEURO http://validador.xxxxxxx, informando o número da referência:<br> <strong> ${data.uuid} </strong>.</td>
                 </tr>
             </tbody>
         </table>`
@@ -62,7 +62,7 @@ class Service {
             <tbody>
                 <tr>
                     <td style="width: 99.8834%; border-color: rgba(255, 255, 255, 0); text-align: right; color: rgb(0, 0, 0);" colspan="3">
-                        <pre><span style="font-size: 12px; color: black;"><strong>Referência n°:</strong> ${data.numeroProcesso} </span></pre>
+                        <pre><span style="font-size: 12px; color: black;"><strong>Referência n°:</strong> ${data.uuid} </span></pre>
                     </td>       
                 </tr>
             </tbody>
@@ -77,7 +77,7 @@ class Service {
             <tbody>
                 <tr>
                     <td style="width: 99.8834%; border-color: rgba(255, 255, 255, 0); text-align: right; color: rgb(0, 0, 0);" colspan="3">
-                        <pre><span style="font-size: 12px; color: black;"><strong>Referência n°:</strong> ${data.numeroProcesso} </span></pre>
+                        <pre><span style="font-size: 12px; color: black;"><strong>Referência n°:</strong> ${data.uuid} </span></pre>
                     </td>       
                 </tr>
                 <tr>

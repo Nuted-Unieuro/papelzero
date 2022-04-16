@@ -39,7 +39,60 @@
                 </v-container>
             </v-expansion-panel-content>
         </v-expansion-panel>
-                <v-expansion-panel>
+        <v-expansion-panel>
+            <v-expansion-panel-header>
+                <b>Informações Sobre o Processo</b>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+
+                <v-container>
+                    <v-row align="center">
+                        <v-col class="d-flex" cols="12" sm="6">
+                            <v-text-field
+                                v-model="tituloProcesso"
+                                label="Título do Processo"
+                                >
+                            </v-text-field>
+                        </v-col>
+                        <v-col class="d-flex" cols="12" sm="6">
+                            <v-autocomplete
+                                :items="dadosTemplates"
+                                item-text='descricao'
+                                item-value='id_template'
+                                label="Templates"
+                                chips
+                                v-model="primeiroTemplate"
+                                clearable
+                                deletable-chips
+                                auto-select-first
+                                @change="(event) => selectedTemplate(event)"
+                            ></v-autocomplete>
+                        </v-col>
+                        <v-col class="d-flex" cols="12" sm="6">
+                            <v-tooltip top>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <div v-on="on" v-bind="attrs">
+                                        <v-switch
+                                            v-model="sigilo"
+                                            label="Processo Confidencial"
+                                            color="#f44336"
+                                            :value="sigilo = sigilo ? true : false"
+                                            hide-details
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            >
+                                        </v-switch>
+                                    </div>                                    
+                                </template>
+                                <span>Se habilitado, somente usuários autenticados que participam do processo podem visualizar.</span>
+                            </v-tooltip>
+                        </v-col>
+                    </v-row>
+                </v-container>          
+                        
+            </v-expansion-panel-content>
+        </v-expansion-panel>
+        <v-expansion-panel>
             <v-expansion-panel-header>
                 <b>Processo</b>
             </v-expansion-panel-header>
@@ -172,27 +225,6 @@
 
                 <v-container>
                     <v-row>
-                        <v-col cols="3">
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <div v-on="on" v-bind="attrs">
-                                        <v-switch
-                                            v-model="sigilo"
-                                            label="Processo Confidencial"
-                                            color="#f44336"
-                                            :value="sigilo = sigilo ? true : false"
-                                            hide-details
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            >
-                                        </v-switch>
-                                    </div>                                    
-                                </template>
-                                <span>Se habilitado, somente usuários autenticados que participam do processo podem visualizar.</span>
-                            </v-tooltip>
-                        </v-col>
-                    </v-row>
-                    <v-row>
                         <v-col cols="4">
                             <v-btn
                                 class="ma-2"
@@ -220,6 +252,7 @@
 
 <script>
     import usuariosService from '../../services/users.service'
+    import templatesService from '../../services/templates.service'
     import processosService from '../../services/processos.service'
     import gerarAssinatura from '../../services/gerarAssinatura.service'
     import 'jodit/build/jodit.min.css'
@@ -233,7 +266,11 @@
                 panel: [0],
                 sigilo: false,
                 nomeUsuario: this.$store.state.auth.user.name,
+                infoProcesso: '',
+                tituloProcesso: '',
                 dadosDepartamentos: [],
+                dadosTemplates: [],
+                primeiroTemplate: null,
                 primeiroDept: null,
                 getUsers: null,
                 dadosUsuarios: [],
@@ -272,6 +309,7 @@
         },
         mounted() {
             this.getDepartamentosByUser()
+            this.getTemplates()
             this.getUsuarioLogadoAssinatura(this.$store.state.auth.user.id)
             this.gerarAssinatura()
 
@@ -298,6 +336,17 @@
             },
         },
         methods:{
+            selectedTemplate(event){
+                console.log(event)
+                let template = ''
+                let x = this.dadosTemplates.map(function(item){
+                    if(item.id === event){
+                        template = item.template
+                    }
+                })
+                this.joditContent = template
+                console.log(template)
+            },
             changeComboAssinaturas () {
                 console.log(this.userLogadoAssintaura, 'paga1')
                 this.usersSelected.filter(obj1 => obj1==this.userLogadoAssintaura[0].id).length > 0 ? this.usersSelected : this.usersSelected.push(this.userLogadoAssintaura[0].id)
@@ -328,6 +377,7 @@
                 dadosProcessos.observadores = this.cacheAssinaturasAcp
                 dadosProcessos.sigilo = this.sigilo
                 dadosProcessos.solicitante = this.userLogadoAssintaura
+                dadosProcessos.tituloProcesso = this.tituloProcesso
                 console.log(dadosProcessos)
                 processosService.save(dadosProcessos)
                     .then((response) => {
@@ -440,6 +490,24 @@
                     if (response.data) {
                         this.dadosDepartamentos = response.data[0].departamentos
                         this.primeiroDept = response.data[0].departamentos[0].id
+                    }
+                }).catch((e) => {
+                    console.log(e.message)
+                    if (this.HTTP_UNAUTHORIZED === e.response.status ||
+                        this.HTTP_FORBIDDEN === e.response.status) {
+                        this.logout(e.response.status)
+                    } else {
+                        this.showError()
+                    }
+                }).finally(() => {
+                this.isLoading = false
+                })
+            },
+            getTemplates(){
+                templatesService.findAllNotPage()
+                .then((response) => {
+                    if (response.data) {
+                        this.dadosTemplates = response.data
                     }
                 }).catch((e) => {
                     console.log(e.message)

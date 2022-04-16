@@ -26,11 +26,11 @@
       </template>
 
       <template v-slot:top>
-          <modalTemplateDrop v-bind:item="item" v-bind:deleteItem="deleteItem" :key="keyItemDelete"></modalTemplateDrop>
+          <modalTemplateDrop :getDataFromApiParent="getDataFromApi" v-bind:item="item" v-bind:deleteItem="deleteItem" :key="keyItemDelete"></modalTemplateDrop>
         <v-toolbar flat>
           <v-toolbar-title>Lista de Templates</v-toolbar-title>
           <v-spacer></v-spacer>
-          <modalTemplates v-bind:item="item" v-bind:editItem="editItem" v-bind:viewItem="viewItem" :key="keyItem"></modalTemplates>
+          <modalTemplates persistent tabindex="-1" role="dialog" @keydown.esc="dialog = true" :getDataFromApiParent="getDataFromApi" v-bind:item="item" v-bind:editItem="editItem" v-bind:viewItem="viewItem" :key="keyItem"></modalTemplates>
         </v-toolbar>
       </template>
 

@@ -89,7 +89,10 @@
       },
       viewItem: {
         type: Boolean
-      }
+      },
+      getDataFromApiParent: {
+        type: Function
+      },
     }, 
     data () {
       return {
@@ -97,7 +100,10 @@
         loading: false,
       }
     },
-    methods: {      
+    methods: {  
+      getDataFromApi: function () {
+        this.getDataFromApiParent();
+      },    
       reset () {
         this.dialog = false
       },
@@ -111,6 +117,7 @@
               this.id = response.data.id
               this.loading = false
               this.dialog = false
+              this.getDataFromApi()
             }
           }).catch((e) => {
             console.log(e.message)

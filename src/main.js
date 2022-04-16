@@ -78,6 +78,30 @@ Vue.mixin({
         readonly: false
       }
     },
+    getDefaultJoditConfigViewProcesso () {
+      const locale = 'pt_br'
+      return {
+        language: locale,
+        width: 'auto',
+        height: 'auto',
+        theme: "summer",
+        zIndex: 9999,
+        toolbarButtonSize: 'small',
+        indentMargin: 20,
+        allowResizeX: false,
+        activeButtonsInReadOnly: ['fullsize', 'print', 'preview'],
+        allowResizeY: true,
+        ignoreEmptyParagraph: true,
+        saveHeightInStorage: false,
+        saveModeInStorage: false,
+        sizeLG: 900,
+        sizeMD: 700,
+        sizeSM: 400,
+        sizeSM: 400,
+        spellcheck: true,
+        readonly: true
+      }
+    },
     getDefaultJoditConfigTemplate () {
       const locale = 'pt_br'
       return {
@@ -99,7 +123,9 @@ Vue.mixin({
         sizeSM: 400,
         sizeSM: 400,
         spellcheck: true,
-        readonly: false
+        readonly: false,
+        askBeforePasteFromWord: false,
+        askBeforePasteHTML: false
       }
     },
     getDefaultJoditButtons () {

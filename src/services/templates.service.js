@@ -9,6 +9,10 @@ class Service {
     return axios.get(`${API_BASE_URL}/templates?page=${data.page}`)
   }
 
+  findAllNotPage (data) {
+    return axios.get(`${API_BASE_URL}/templatesall`)
+  }
+
   processoByUsuario (data, query) {
     return axios.get(`${API_BASE_URL}/processobyusuario/${query}?page=${data.page}`)
   }

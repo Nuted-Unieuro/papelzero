@@ -43,24 +43,6 @@
       hide-overlay
       transition="dialog-bottom-transition"
     >
-      <template v-slot:activator="{ on: dialog, attrs }">
-        <v-tooltip left>
-        <template v-slot:activator="{ on: tooltip}">
-            <v-btn
-            color="primary"
-            dark
-            v-bind="attrs"
-            v-on="{ ...tooltip, ...dialog }"
-            elevation="12"
-            >
-            <v-icon dark>
-                mdi-plus
-            </v-icon>
-            </v-btn>
-        </template>
-            <span>Criar Novo Template</span>
-        </v-tooltip>
-      </template>
       <v-card>
         <v-toolbar
           dark
@@ -74,19 +56,6 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title> {{ titleModal }} </v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-toolbar-items>
-            <v-btn
-              v-if="!disabled"
-              text
-              @click="saveTemplate"
-              class="mt-3"
-              :loading="loading"
-              :disabled="loading"
-            >
-              {{buttonModal}}
-            </v-btn>
-          </v-toolbar-items>
         </v-toolbar>
         <v-list
           three-line
@@ -110,25 +79,25 @@
               
                 <v-col cols="10">
               <v-text-field
-                v-model="nomeTemplate"
+                v-model="nomeProcesso"
                 :counter="50"
-                label="Nome do Template"
-                :disabled="disabled"
+                label="Nome do Processo"
+                :readonly="disabled"
                 required
               ></v-text-field>
               </v-col>
               <v-col cols="2">
                 <v-switch
-                  v-model="viewTemplate"
-                  :disabled="disabled"
-                  :label="`Habilitar Template?`"
+                  v-model="viewProcesso"
+                  :readonly="disabled"
+                  :label="`Processo Sigiloso?`"
               ></v-switch>
               </v-col>
             </v-list-item-content>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
-              <div id="NewTemplate">
+              <div id="NewProcesso">
                   <jodit-editor
                       v-model.trim="joditContent"
                       :buttons="buttons"
@@ -145,6 +114,8 @@
 
 <script>
   import templatesService from '../../../services/templates.service'
+  import gerarAssinatura from '../../../services/gerarAssinatura.service'
+  import assinaturasService from '../../../services/assinaturas.service'
   import 'jodit/build/jodit.min.css'
   import { JoditEditor } from 'jodit-vue'
   export default {
@@ -161,17 +132,14 @@
       viewItem: {
         type: Boolean
       },
-      getDataFromApiParent: {
-        type: Function
-      },
     }, 
     data () {
       return {
         dialog: this.editItem,
-        nomeTemplate: null,
+        nomeProcesso: null,
         joditContent:"",
-        config: this.getDefaultJoditConfigTemplate(),
-        buttons: this.getDefaultJoditButtons(),
+        config: this.getDefaultJoditConfigViewProcesso(),
+        buttons: this.getDefaultJoditButtonsPush(),
         id:null,
         user_id: this.$store.state.auth.user.id,
         loader: null,
@@ -179,90 +147,121 @@
         erroAlert: false,
         textErroAlert: null,
         typeErroAlert: null,
-        viewTemplate: true,
-        titleModal: 'Criar Novo Template',
-        buttonModal: 'Criar Template',
-        disabled: true
+        viewProcesso: true,
+        titleModal: 'Criar Novo Processo',
+        buttonModal: 'Criar Processo',
+        disabled: true,
+        assinatura: {
+            nomeUsuario: '',
+            cargoUsuario: '',
+            departamentoUsuario: '',
+            dataAssinatura: '',
+            fingerprint: require('@/assets/images/fingerprint.svg')
+        },
+        template: {
+            logoUnieuro: require('@/assets/images/logos/unieuro.png')
+        },
+        processo: {
+            numeroProcesso: '87a3e041-c41a-54ad-e340-7ed9e859cb77'
+        },
+        templateInit: {
+            confidencial: require('@/assets/images/confidencial.svg')
+        },
       }
     },
-    created() {
+    created: function() {
       console.log('created', this.editItem,this.item)
-      if (this.editItem) {
-        this.nomeTemplate = this.item.descricao
-        this.joditContent = this.item.template
-        this.id = this.item.id_template
-        this.viewTemplate = this.item.visible
-        this.titleModal = "Editar Template"
-        this.buttonModal = "Editar Template",
-        this.disabled = false
-      }
       if (this.viewItem) {
-        this.nomeTemplate = this.item.descricao
-        this.joditContent = this.item.template
-        this.id = this.item.id_template
-        this.viewTemplate = this.item.visible
-        this.titleModal = "Visualizar Template"
-        this.buttonModal = "Editar Template",
+        this.nomeProcesso = this.item.titulo
+        this.joditContent = this.item.desc_documento
+        this.id = this.item.id
+        this.viewProcesso = this.item.sigilo
+        this.titleModal = "Visualizar Processo"
+        this.buttonModal = "Editar Processo",
         this.disabled = true
         this.config.readonly = this.disabled
+        this.assinatura = this.getAssinaturasUsuarios(this.item)
+        
       }
     },
-    mounted() {
-      document.addEventListener("keydown", (e) => {
-        if (e.keyCode == 27) {
-              this.dialog = true
-          }
-      });
-    },
-    watch: {
-      dialog(visible) {
-        if (visible) {
-          console.log(this.editItem, this.viewItem,'tse')
-          this.nomeTemplate = null
-          this.joditContent = ""
-          this.id = null
-          this.viewTemplate = true
-          this.titleModal = "Criar Novo Template"
-          this.buttonModal = "Criar Template"
-          this.erroAlert = false
-          this.disabled = false
-          console.log("Dialog was opened!")
-          
-        } else {
-          this.dialog = false
-          console.log("Dialog was closed!")
+    methods: {   
+      gerarAssinatura(){
+        console.log(this.item.sigilo)
+        this.joditContent = ''
+        if(this.item.sigilo){
+          this.joditContent = this.joditContent.concat(gerarAssinatura.geradorConfidencial(this.templateInit))
         }
-      }
+        this.joditContent = this.joditContent.concat(gerarAssinatura.geradorCabecalho(this.item))
+        this.joditContent = this.joditContent.concat(this.item.desc_documento)
+        this.assinatura.forEach(assinatura => {
+          this.joditContent = this.joditContent.concat(gerarAssinatura.geradorAssinatura(assinatura))
+        })
+        if(this.item.dt_encerramento != null){
+          this.joditContent = this.joditContent.concat(gerarAssinatura.geradorQrCode(this.item))
+        }
+        this.joditContent = this.joditContent.concat(gerarAssinatura.geradorReferencia(this.item))
+      },   
+      getAssinaturasUsuarios(item){
+        let assinaturas = []
+        assinaturasService.assinadosbyprocessos(item)
+        .then((response) => {
+          console.log(response)
+          if (response.data) {
+            console.log(response.data,'dados')
+            assinaturas = response.data.map(function(item){
+              let assinatura = {
+                nomeUsuario: item.name,
+                cargoUsuario: item.cargo,
+                departamentoUsuario: item.nome_departamento,
+                dataAssinatura: item.dt_assinatura,
+                fingerprint: require('@/assets/images/fingerprint.svg')
+              }
+              return assinatura
+            })
+            console.log(assinaturas, 'assinaturas')
+            this.assinatura = assinaturas
+            this.gerarAssinatura()
+          }
+        }).catch((e) => {
+          console.log(e.message)
+          if (this.HTTP_UNAUTHORIZED === e.response.status ||
+              this.HTTP_FORBIDDEN === e.response.status) {
+            this.logout(e.response.status)
+          } else {
+            this.showError()
+          }
+        }).finally(() => {
+          this.isLoading = false
+        })
       },
-    methods: {      
       getDataFromApi: function () {
         this.getDataFromApiParent();
       },  
       reset () {
         this.dialog = false
       },
-      saveTemplate(){
+      saveProcesso(){
         this.loading = true
         this.erroAlert = false
-        let newTemplate = 
+        let newProcesso = 
           {
-            'descricao': this.nomeTemplate, 
+            'descricao': this.nomeProcesso, 
             'template': this.joditContent, 
             'user_id': this.user_id,
-            'visible': this.viewTemplate
+            'visible': this.viewProcesso
           }
-        if(newTemplate.descricao == null || 
-          newTemplate.descricao == `` || 
-          newTemplate.template == null ||
-          newTemplate.template == ``){
+        if(newProcesso.descricao == null || 
+          newProcesso.descricao == `` || 
+          newProcesso.template == null ||
+          newProcesso.template == ``){
             this.typeErroAlert = 'error'
             this.textErroAlert = 'Preencha todos os campos'
             this.erroAlert = true
-            console.log(newTemplate, this.erroAlert)
+            console.log(newProcesso, this.erroAlert)
             this.loading = false
             return
         }
-        templatesService.save(newTemplate, this.id)
+        templatesService.save(newProcesso, this.id)
           .then((response) => {
             console.log(response)
             if (response.data) {
@@ -270,7 +269,7 @@
               this.loading = false
               this.erroAlert = true
               this.typeErroAlert = 'success'
-              this.textErroAlert = 'Template Inserido com Sucesso!'
+              this.textErroAlert = 'Processo Inserido com Sucesso!'
               this.getDataFromApi()
             }
           }).catch((e) => {

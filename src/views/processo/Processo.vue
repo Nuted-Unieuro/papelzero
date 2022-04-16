@@ -7,7 +7,6 @@
     <!-- basic -->
     <v-col cols="12">
       <v-card class="elevation-2">
-        <v-card-title>Lista de Processos</v-card-title>
         <lista-processos></lista-processos>        
       </v-card>
     </v-col>

@@ -8,6 +8,9 @@ class Service {
   assinaturasbyprocessos (data, item) {
     return axios.get(`${API_BASE_URL}/${item.id}?page=${data.page}`)
   }
+  assinadosbyprocessos (item) {
+    return axios.get(`${API_URL}api/assinadosbyprocessos/${item.id}`)
+  }
 
   findAllByConnectedUser () {
     return axios.get(`${API_BASE_URL}/find-by-user`, { headers: authHeader() })
