@@ -6,6 +6,8 @@ import vuetify from './plugins/vuetify'
 import router from './router'
 import store from './store'
 
+window._ = require('lodash')
+
 import moment from 'moment'
 
 Vue.prototype.moment = moment

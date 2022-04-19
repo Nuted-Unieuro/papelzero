@@ -32,6 +32,7 @@
                                 v-model="primeiroDept"
                                 clearable
                                 deletable-chips
+                                @change="(event) => changeUserAssinatura(event)"
                                 auto-select-first
                             ></v-autocomplete>
                         </v-col>
@@ -228,20 +229,26 @@
                         <v-col cols="4">
                             <v-btn
                                 class="ma-2"
-                                :loading="loadSubmit"
-                                :disabled="loadSubmit"
+                                :loading="loading"
+                                :disabled="loading"
                                 color="info"
                                 @click="submeterProcesso()"
                                 >
                                 Registrar Processo
-                                <template v-slot:loaderSubmit>
-                                    <span class="custom-loader">
-                                    <v-icon light>mdi-cached</v-icon>
-                                    </span>
-                                </template>
                                 </v-btn>
+                                <p>*Ao clicar em Registrar Processo, você concorda em assinar o documento digitalmente e se responsabiliza pelo seu conteúdo. Todos os participantes do processo serão notificados.</p>
                             </v-col>
-                        </v-row>
+                        <v-col cols="6">
+                           <v-alert
+                            prominent
+                            transition="scale-transition"
+                            :value="notify.value"
+                            :type="notify.type"
+                            >
+                            {{notify.text}}
+                            </v-alert>
+                        </v-col>
+                    </v-row>
                 </v-container>          
                         
             </v-expansion-panel-content>
@@ -282,6 +289,7 @@
                 dadosUsuariosAcp: [],
                 usersSelectedAcp: [],
                 isLoadingAcp: false,
+                loading: false,
                 joditContentIsEmpty: false,
                 joditContent: '',
                 config: this.getDefaultJoditConfig(),
@@ -304,14 +312,19 @@
                 },
                 loadSubmit: false,
                 loaderSubmit: null,
-                userLogadoAssintaura: []
+                userLogadoAssintaura: [],
+                notify: {
+                    value: false,
+                    type: 'success',
+                    text: 'Inserido com sucesso',
+                    color: 'green'
+                },
             }
         },
         mounted() {
             this.getDepartamentosByUser()
             this.getTemplates()
             this.getUsuarioLogadoAssinatura(this.$store.state.auth.user.id)
-            this.gerarAssinatura()
 
         },
         watch: {
@@ -348,17 +361,54 @@
                 console.log(template)
             },
             changeComboAssinaturas () {
+                let userLogado = _.find(this.userLogadoAssintaura, {dept_id:this.primeiroDept})
                 console.log(this.userLogadoAssintaura, 'paga1')
-                this.usersSelected.filter(obj1 => obj1==this.userLogadoAssintaura[0].id).length > 0 ? this.usersSelected : this.usersSelected.push(this.userLogadoAssintaura[0].id)
+                this.usersSelected.filter(obj1 => obj1==userLogado.id).length > 0 ? this.usersSelected : this.usersSelected.push(userLogado.id)
             },
             submeterProcesso() {
-                this.loaderSubmit = 'loadSubmit'
-                const l = this.loaderSubmit
-                this[l] = !this[l]
-                this.loadSubmit = false
-                this.createProcess()
-                this.loaderSubmit = null
+                this.loading = true
+                this.validarCampos()
+                //this.createProcess()
+                this.loading = false
 
+            },
+            validarCampos(){
+                this.notify = 
+                    {
+                        value: true,
+                        type: 'success',
+                        text: 'O Processo foi Registrado com Sucesso',
+                        color: 'green'
+                    }
+                let assintantes = this.cacheAssinaturas
+                let observadores = this.cacheAssinaturasAcp
+                let count = assintantes.length + observadores.length
+                console.log(count, 'count')
+                if(this.primeiroDept === null){
+                    this.notify.type = 'warning'
+                    this.notify.color = 'red'
+                    this.notify.text = 'Selecione o departamento do solicitante'
+                }else if(this.tituloProcesso === ''){
+                    this.notify.type = 'warning'
+                    this.notify.color = 'red'
+                    this.notify.text = 'O título do processo não pode ser vazio'
+                }else if(this.joditContent === ''){
+                    this.notify.type = 'warning'
+                    this.notify.color = 'red'
+                    this.notify.text = 'O processo não pode ser vazio'
+                }else if(count < 2){
+                    this.notify.type = 'warning'
+                    this.notify.color = 'red'
+                    this.notify.text = 'Selecione ao menos dois participantes no processo'
+                }else{
+                    this.createProcess()
+                    this.alertTimeout()
+                }
+            },
+            alertTimeout(){
+                setTimeout(() => {
+                    this.notify.value=false
+                },5000)
             },
             createProcess(){
                 console.log('conteudo processo')
@@ -376,7 +426,7 @@
                 dadosProcessos.assinantes = this.cacheAssinaturas
                 dadosProcessos.observadores = this.cacheAssinaturasAcp
                 dadosProcessos.sigilo = this.sigilo
-                dadosProcessos.solicitante = this.userLogadoAssintaura
+                dadosProcessos.solicitante = [_.find(this.userLogadoAssintaura, {dept_id:this.primeiroDept})]
                 dadosProcessos.tituloProcesso = this.tituloProcesso
                 console.log(dadosProcessos)
                 processosService.save(dadosProcessos)
@@ -530,6 +580,12 @@
                 const index = this.usersSelectedAcp.indexOf(item.id)
                 if (index >= 0) this.usersSelectedAcp.splice(index, 1)
             },
+            changeUserAssinatura (item) {
+                let userLogado = _.find(this.userLogadoAssintaura, {dept_id:item})
+                console.log(userLogado)
+                this.usersSelected = [userLogado.id]
+                console.log(item)
+            }
         }
     }
 </script>

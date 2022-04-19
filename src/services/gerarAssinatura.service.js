@@ -20,13 +20,8 @@ class Service {
                         </td>
                         <td style="width: 90%; color: rgb(0, 0, 0); border-color: rgba(255, 255, 255, 0);">
                             Documento assinado eletronicamente por 
-                            <strong>
-                                ${data.nomeUsuario}
-                            </strong>, 
-                            <strong>
-                                ${data.cargoUsuario} - ${data.departamentoUsuario}
-                            </strong>
-                            , em ${dataAssinatura}, conforme horário oficial de Brasília, com fundamento na Instrução da Reitoria 0001/2022 do Centro Universitário Unieuro.
+                            <strong>${data.nomeUsuario.trim()}</strong>, 
+                            <strong>${data.cargoUsuario} - ${data.departamentoUsuario}</strong>, em ${dataAssinatura}, conforme horário oficial de Brasília, com fundamento na Instrução da Reitoria 0001/2022 do Centro Universitário Unieuro.
                         </td>
                 </tr>
                 </tbody>

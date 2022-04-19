@@ -23,6 +23,7 @@
           <v-toolbar-title>Lista de Processos</v-toolbar-title>
           <v-spacer></v-spacer>
           <modalProcessos persistent @keydown.esc="dialog = true" v-bind:item="item" v-bind:editItem="editItem" v-bind:viewItem="viewItem" :key="keyItem"></modalProcessos>
+          <assinaturaModalProcessos persistent @keydown.esc="dialog = true" v-bind:item="item" v-bind:editItem="editItemAssinatura" v-bind:viewItem="viewItemAssinatura" :key="keyItemAssinatura"></assinaturaModalProcessos>
         </v-toolbar>
       </template>
       <!-- Tabela de Assinaturas -->
@@ -91,7 +92,7 @@
         <v-icon
           small
           class="mr-2"
-          @click="editItem(item)"
+          @click="assinarProcesso(item)"
         >
           mdi-pencil-lock
         </v-icon>
@@ -109,9 +110,11 @@
   import procesosService from '../../../services/processos.service'
   import assinaturasService from '../../../services/assinaturas.service'
   import modalProcessos from './processo-view-modal.vue'
+  import assinaturaModalProcessos from './processo-assinatura-modal.vue'
 export default {
   components: {
-      modalProcessos
+      modalProcessos,
+      assinaturaModalProcessos
   },
   data () {
     return {
@@ -129,6 +132,9 @@ export default {
       editItem:false,
       viewItem:false,
       keyItem: 0,
+      editItemAssinatura:false,
+      viewItemAssinatura:false,
+      keyItemAssinatura: 0,
       keyItemDelete: 1500,
       headers: [
         
@@ -270,6 +276,14 @@ export default {
       this.keyItem++
       this.viewItem = true
       this.editItem = true
+      console.log(item)
+      //this.$refs.modalTemplates.dialog=true
+    },
+    assinarProcesso (item) {
+      this.item = item
+      this.keyItemAssinatura++
+      this.viewItemAssinatura = true
+      this.editItemAssinatura = true
       console.log(item)
       //this.$refs.modalTemplates.dialog=true
     },

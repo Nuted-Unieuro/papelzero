@@ -40,6 +40,7 @@
     "axios": "^0.26.0",
     "core-js": "^3.6.5",
     "jodit-vue": "^2.4.0",
+    "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "vue": "^2.6.11",
     "vue-apexcharts": "^1.6.2",
