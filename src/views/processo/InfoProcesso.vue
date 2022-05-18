@@ -75,7 +75,7 @@
                                     <div v-on="on" v-bind="attrs">
                                         <v-switch
                                             v-model="sigilo"
-                                            label="Processo Confidencial"
+                                            label="Documento Interno"
                                             color="#f44336"
                                             :value="sigilo = sigilo ? true : false"
                                             hide-details

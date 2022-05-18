@@ -89,7 +89,7 @@
 
       <!-- Template da coluna de ações -->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon
+        <v-icon v-if="item.dt_assinatura == null && item.cod_status != 2"
           small
           class="mr-2"
           @click="assinarProcesso(item)"

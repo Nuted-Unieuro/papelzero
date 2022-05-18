@@ -1,0 +1,302 @@
+<style>
+    .demo {
+    	width:100%;
+    	border:1px solid #C0C0C0;
+    	border-collapse:collapse;
+    	padding:5px;
+    }
+    .demo th {
+    	border:1px solid #C0C0C0;
+    	padding:5px;
+    	background:#F0F0F0;
+    }
+    .demo td {
+    	border:1px solid #C0C0C0;
+    	padding:5px;
+    }
+</style>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: center;">Projeto de Extensão de Curta Duração</th>
+        </tr>
+    </thead>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+
+            <th style="text-align: left;">Título do Projeto</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Identificação dos Participantes Docentes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Apresentação</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Justificativa</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Objetivos</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Objetivo Geral:</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Objetivos Específicos:</strong></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Local de Realização</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>( ) Asa Sul</p>
+                <p>( ) Águas Claras</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Carga Horária e Cobrança</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Carga Horária: </td>
+        </tr>
+        <tr>
+            <td>Valor Cobrado (R$): </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Período do Projeto e Inscrições</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Data: </td>
+        </tr>
+        <tr>
+            <td>Data Limite para Inscrições: </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Criar Página no Even3?</p>
+                <p>( ) Sim</p>
+                <p>( ) Não</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Metodologia</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Público Alvo</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Cronograma de Execução</th>
+        </tr>
+    </thead>
+</table>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="width: 34.2495%;">Módulos</th>
+            <th style="width: 18.2875%;">Período</th>
+            <th style="width: 27.907%;">Docentes</th>
+            <th style="width: 19.4503%;">Carga Horária</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+            <td><br></td>
+            <td><br></td>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>Carga Horária Total</td>
+            <td colspan="3"><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Infraestrutura</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>( ) Sala de Aula</p>
+                <p>( ) Data-Show</p>
+                <p>( ) Laboratório</p>
+                <p>( ) Outros - Especificar:</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Financeiro</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>( ) Sem Custos</p>
+                <p>( ) Com Custos</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Despesas Operacionais (Materiais)</th>
+        </tr>
+    </thead>
+</table>
+
+<table class="demo">
+    <thead>
+        <tr>
+
+            <th style="width: 58.6681%;">Item</th>
+            <th style="width: 10.148%;">Quantidade</th>
+            <th style="width: 16.4905%;">Valor Unitário (R$)</th>
+            <th style="width: 14.5877%;">Valor Total (R$)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+            <td><br></td>
+            <td><br></td>
+            <td><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="text-align: left;">Despesas com Docentes</th>
+        </tr>
+    </thead>
+</table>
+
+<table class="demo">
+    <thead>
+        <tr>
+            <th style="width: 40%;">Docente</th>
+            <th style="width: 15%;">Matrícula</th>
+            <th style="width: 15%;">Valor H/A (R$)</th>
+            <th style="width: 15%;">Total de H/A</th>
+            <th style="width: 15%;">Custo Total (R$)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><br></td>
+            <td><br></td>
+            <td><br></td>
+            <td><br></td>
+            <td><br></td>
+        </tr>
+        <tr>
+            <td>Custo Total Docentes</td>
+            <td colspan="4"><br></td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<p> Ciente e de acordo, submeto o projeto para conferência e autorização.</p>

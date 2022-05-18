@@ -49,7 +49,7 @@ class Service {
   }
 
   update (data, id) {
-    return axios.put(`${API_BASE_URL}/${id}`, data, { headers: authHeader() })
+    return axios.put(`${API_BASE_URL}/assinarProcesso/${id}`, data)
   }
 
   deleteById (id) {

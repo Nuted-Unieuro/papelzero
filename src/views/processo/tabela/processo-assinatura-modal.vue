@@ -88,14 +88,15 @@
               <v-col cols="2">
                 <v-switch
                   v-model="viewProcesso"
-                  :label="`Processo Sigiloso?`"
-                  hint="Você pode alterar o status de sigilo do processo, mas não pode alterar o nome."
+                  :label="`Documento Interno?`"
+                  hint="Você pode alterar o status de sigilo do processo, tornando o mesmo público ou privado."
                   persistent-hint
                 ></v-switch>
               </v-col>
               <v-col cols="4">
                 <v-textarea
                   name="input-5-1"
+                  v-model="observacao"
                   label="Observações"
                   value=""
                   auto-grow
@@ -106,6 +107,7 @@
               </v-col>
               <v-col cols="2">
                 <v-select
+                  v-model="deferir"
                   :items="itemsDecisao"
                   :menu-props="{ maxHeight: '400' }"
                   label="O que deseja fazer?"
@@ -117,9 +119,9 @@
                 <v-btn
                   class="ma-2"
                   :loading="loading"
-                  :disabled="loading"
+                  :disabled="loading || deferir == null"
                   color="info"
-                  @click="submeterProcesso()"
+                  @click="assinarProcesso()"
                   persistent-hint
                   >
                   Assinar Processo
@@ -146,7 +148,7 @@
 </template>
 
 <script>
-  import templatesService from '../../../services/templates.service'
+  import processoService from '../../../services/processos.service'
   import gerarAssinatura from '../../../services/gerarAssinatura.service'
   import assinaturasService from '../../../services/assinaturas.service'
   import 'jodit/build/jodit.min.css'
@@ -184,7 +186,10 @@
         titleModal: 'Criar Novo Processo',
         buttonModal: 'Criar Processo',
         disabled: true,
-        itemsDecisao: [{value: 0, text: 'Deferir Processo'}, {value: 3, text: 'Indeferir Processo'}],
+        observacao: "",
+        deferir: null,
+        assinatura_id: null,
+        itemsDecisao: [{value: 0, text: 'Deferir Processo'}, {value: 2, text: 'Indeferir Processo'}],
         assinatura: {
             nomeUsuario: '',
             cargoUsuario: '',
@@ -209,6 +214,7 @@
         this.nomeProcesso = this.item.titulo
         this.joditContent = this.item.desc_documento
         this.id = this.item.id
+        this.assinatura_id = this.item.id_assinatura
         this.viewProcesso = this.item.sigilo
         this.titleModal = "Assinar Processo"
         this.buttonModal = "Editar Processo",
@@ -274,37 +280,26 @@
       reset () {
         this.dialog = false
       },
-      saveProcesso(){
+      assinarProcesso(){
         this.loading = true
         this.erroAlert = false
-        let newProcesso = 
+        let assinarProcesso = 
           {
-            'descricao': this.nomeProcesso, 
-            'template': this.joditContent, 
+            'observacao': this.observacao, 
             'user_id': this.user_id,
-            'visible': this.viewProcesso
+            'departamento_id': this.item.departamento_id,
+            'visible': this.viewProcesso,
+            'processo_id': this.id,
+            'deferir': this.deferir,
+            'assinatura_id': this.assinatura_id
           }
-        if(newProcesso.descricao == null || 
-          newProcesso.descricao == `` || 
-          newProcesso.template == null ||
-          newProcesso.template == ``){
-            this.typeErroAlert = 'error'
-            this.textErroAlert = 'Preencha todos os campos'
-            this.erroAlert = true
-            console.log(newProcesso, this.erroAlert)
-            this.loading = false
-            return
-        }
-        templatesService.save(newProcesso, this.id)
+        processoService.update(assinarProcesso, this.id)
           .then((response) => {
             console.log(response)
             if (response.data) {
               this.id = response.data.id
               this.loading = false
-              this.erroAlert = true
-              this.typeErroAlert = 'success'
-              this.textErroAlert = 'Processo Inserido com Sucesso!'
-              this.getDataFromApi()
+              this.$router.go()
             }
           }).catch((e) => {
             console.log(e.message)

@@ -90,7 +90,7 @@
                 <v-switch
                   v-model="viewProcesso"
                   :readonly="disabled"
-                  :label="`Processo Sigiloso?`"
+                  :label="`Documento Interno?`"
               ></v-switch>
               </v-col>
             </v-list-item-content>

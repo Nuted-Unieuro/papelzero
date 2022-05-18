@@ -96,7 +96,7 @@ class Service {
                     <tr>
                         <td style="width: 100%; background-color: rgb(0, 0, 0);">
 
-                            <p style="text-align: center;"><span style="color: rgb(255, 255, 255);"><strong style="font-size: 24px;">PROCESSO CONFIDENCIAL</strong></span></p>
+                            <p style="text-align: center;"><span style="color: rgb(255, 255, 255);"><strong style="font-size: 24px;">Documento Interno</strong></span></p>
                         </td>
                     </tr>
                 </tbody>
