@@ -42,6 +42,11 @@
         :to="{ name: 'dashboard' }"
         :icon="icons.mdiHomeOutline"
       ></nav-menu-link> -->
+      <nav-menu-link v-if="this.$store.state.auth.user.tipo_acesso == 0"
+        title="Administração"
+        :to="{ name: 'administracao'}"
+        :icon="icons.mdiConsole"
+      ></nav-menu-link>
       <nav-menu-link
         title="Criar Processo"
         :to="{ name: 'processo'}"
@@ -52,7 +57,7 @@
         :to="{ name: 'processos'}"
         :icon="icons.mdiFileDocumentMultiple"
       ></nav-menu-link>
-      <nav-menu-link
+      <nav-menu-link v-if="this.$store.state.auth.user.tipo_acesso == 0 || this.$store.state.auth.user.tipo_acesso == 2"
         title="Templates"
         :to="{ name: 'templates'}"
         :icon="icons.mdiTableEdit"
@@ -126,6 +131,7 @@ import {
   mdiAccountCogOutline,
   mdiFileDocumentMultiple,
   mdiFileDocument,
+  mdiConsole,
   mdiTableEdit
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
@@ -144,7 +150,7 @@ export default {
       default: null,
     },
   },
-  setup() {
+  data() {
     return {
       icons: {
         mdiHomeOutline,
@@ -157,6 +163,7 @@ export default {
         mdiAccountCogOutline,
         mdiFileDocumentMultiple,
         mdiFileDocument,
+        mdiConsole,
         mdiTableEdit
       },
     }

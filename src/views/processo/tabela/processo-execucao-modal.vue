@@ -75,26 +75,61 @@
         </v-alert>
           <!-- <v-subheader></v-subheader> -->
           <v-list-item>
-            <v-list-item-content>
-              
-                <v-col cols="10">
-              <v-text-field
-                v-model="nomeProcesso"
-                :counter="50"
-                label="Nome do Processo"
-                :readonly="disabled"
-                required
-              ></v-text-field>
-              </v-col>
+            <v-list-item-content>          
+              <v-col cols="10">
+                <v-text-field
+                  v-model="nomeProcesso"
+                  :counter="50"
+                  label="Nome do Processo"
+                  :readonly="disabled"
+                  required
+                ></v-text-field>
+              </v-col>              
               <v-col cols="2">
                 <v-switch
                   v-model="viewProcesso"
-                  :readonly="disabled"
                   :label="`Documento Interno?`"
-              ></v-switch>
+                  hint="Você pode alterar o status de sigilo do processo, tornando o mesmo público ou privado."
+                  persistent-hint
+                ></v-switch>
+              </v-col>
+              <v-col cols="4">
+                <v-textarea
+                  name="input-5-1"
+                  v-model="observacao"
+                  label="Observações"
+                  value=""
+                  auto-grow
+                  rows="1"
+                  hint="Esta oberservação será publicada junto ao processo, mas será exibida apenas para os participantes do processo."
+                  persistent-hint
+                ></v-textarea>
+              </v-col>
+              <v-col cols="2">
+                <v-select
+                  v-model="deferir"
+                  :items="itemsDecisao"
+                  :menu-props="{ maxHeight: '400' }"
+                  label="O que deseja fazer?"
+                  hint="Executado: As ações dessa etapa serão dadas como executadas."
+                  persistent-hint
+                ></v-select>
+              </v-col>
+              <v-col cols="4">
+                <v-btn
+                  class="ma-2"
+                  :loading="loading"
+                  :disabled="loading || deferir == null"
+                  color="info"
+                  @click="assinarProcesso()"
+                  persistent-hint
+                  >
+                  Executar Processo
+                </v-btn>
               </v-col>
             </v-list-item-content>
           </v-list-item>
+          
           <v-list-item>
             <v-list-item-content>
               <div id="NewProcesso">
@@ -113,7 +148,7 @@
 </template>
 
 <script>
-  import templatesService from '../../../services/templates.service'
+  import processoService from '../../../services/processos.service'
   import gerarAssinatura from '../../../services/gerarAssinatura.service'
   import assinaturasService from '../../../services/assinaturas.service'
   import 'jodit/build/jodit.min.css'
@@ -151,6 +186,10 @@
         titleModal: 'Criar Novo Processo',
         buttonModal: 'Criar Processo',
         disabled: true,
+        observacao: "",
+        deferir: null,
+        assinatura_id: null,
+        itemsDecisao: [{value: 4, text: 'Executado'}],
         assinatura: {
             nomeUsuario: '',
             cargoUsuario: '',
@@ -175,8 +214,9 @@
         this.nomeProcesso = this.item.titulo
         this.joditContent = this.item.desc_documento
         this.id = this.item.id
+        this.assinatura_id = this.item.id_assinatura
         this.viewProcesso = this.item.sigilo
-        this.titleModal = "Visualizar Processo"
+        this.titleModal = "Executar Processo"
         this.buttonModal = "Editar Processo",
         this.disabled = true
         this.config.readonly = this.disabled
@@ -186,6 +226,7 @@
     },
     methods: {   
       gerarAssinatura(){
+        console.log(this.item.sigilo)
         this.joditContent = ''
         if(this.item.sigilo){
           this.joditContent = this.joditContent.concat(gerarAssinatura.geradorConfidencial(this.templateInit))
@@ -195,6 +236,9 @@
         this.assinatura.forEach(assinatura => {
           this.joditContent = this.joditContent.concat(gerarAssinatura.geradorAssinatura(assinatura))
         })
+        if(this.item.dt_encerramento != null){
+          this.joditContent = this.joditContent.concat(gerarAssinatura.geradorQrCode(this.item))
+        }
         if(this.item.cod_status == 0 || this.item.cod_status == 3){
           this.joditContent = this.joditContent.concat(gerarAssinatura.geradorQrCode(this.item))
         }
@@ -239,37 +283,26 @@
       reset () {
         this.dialog = false
       },
-      saveProcesso(){
+      assinarProcesso(){
         this.loading = true
         this.erroAlert = false
-        let newProcesso = 
+        let assinarProcesso = 
           {
-            'descricao': this.nomeProcesso, 
-            'template': this.joditContent, 
+            'observacao': this.observacao, 
             'user_id': this.user_id,
-            'visible': this.viewProcesso
+            'departamento_id': this.item.departamento_id,
+            'visible': this.viewProcesso,
+            'processo_id': this.id,
+            'deferir': this.deferir,
+            'assinatura_id': this.assinatura_id
           }
-        if(newProcesso.descricao == null || 
-          newProcesso.descricao == `` || 
-          newProcesso.template == null ||
-          newProcesso.template == ``){
-            this.typeErroAlert = 'error'
-            this.textErroAlert = 'Preencha todos os campos'
-            this.erroAlert = true
-            console.log(newProcesso, this.erroAlert)
-            this.loading = false
-            return
-        }
-        templatesService.save(newProcesso, this.id)
+        processoService.update(assinarProcesso, this.id)
           .then((response) => {
             console.log(response)
             if (response.data) {
               this.id = response.data.id
               this.loading = false
-              this.erroAlert = true
-              this.typeErroAlert = 'success'
-              this.textErroAlert = 'Processo Inserido com Sucesso!'
-              this.getDataFromApi()
+              this.$router.go()
             }
           }).catch((e) => {
             console.log(e.message)

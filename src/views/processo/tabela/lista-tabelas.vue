@@ -24,6 +24,7 @@
           <v-spacer></v-spacer>
           <modalProcessos persistent @keydown.esc="dialog = true" v-bind:item="item" v-bind:editItem="editItem" v-bind:viewItem="viewItem" :key="keyItem"></modalProcessos>
           <assinaturaModalProcessos persistent @keydown.esc="dialog = true" v-bind:item="item" v-bind:editItem="editItemAssinatura" v-bind:viewItem="viewItemAssinatura" :key="keyItemAssinatura"></assinaturaModalProcessos>
+          <execucaoModalProcessos persistent @keydown.esc="dialog = true" v-bind:item="item" v-bind:editItem="execEditItemAssinatura" v-bind:viewItem="execViewItemAssinatura" :key="keyItemAssinatura"></execucaoModalProcessos>
         </v-toolbar>
       </template>
       <!-- Tabela de Assinaturas -->
@@ -60,7 +61,7 @@
             </template>
             <!-- Formatação da coluna Data da Tabela de Assinaturas -->
             <template v-slot:[`item.dt_assinatura`]="{ item }">
-              <span>{{ item.dt_assinatura != null ? new Date(item.dt_assinatura).toLocaleString() : "Aguardando Aprovação" }}</span>
+              <span>{{ item.dt_assinatura != null ? new Date(item.dt_assinatura).toLocaleString() : (item.cod_status == 1 ? "Aguardando Aprovação" : "Aguardando Execução") }}</span>
             </template>   
             <!-- Template de formatação da coluna observação -->
             <template v-slot:[`item.observacao`]="{ item }">
@@ -89,10 +90,17 @@
 
       <!-- Template da coluna de ações -->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon v-if="item.dt_assinatura == null && item.cod_status != 2"
+        <v-icon v-if="item.dt_assinatura == null && item.cod_status != 2 && item.permissao != 0"
           small
           class="mr-2"
           @click="assinarProcesso(item)"
+        >
+          mdi-pencil-lock
+        </v-icon>
+        <v-icon v-if="item.dt_assinatura == null && item.cod_status == 3 && item.permissao == 0"
+          small
+          class="mr-2"
+          @click="executarProcesso(item)"
         >
           mdi-pencil-lock
         </v-icon>
@@ -111,10 +119,12 @@
   import assinaturasService from '../../../services/assinaturas.service'
   import modalProcessos from './processo-view-modal.vue'
   import assinaturaModalProcessos from './processo-assinatura-modal.vue'
+  import execucaoModalProcessos from './processo-execucao-modal.vue'
 export default {
   components: {
       modalProcessos,
-      assinaturaModalProcessos
+      assinaturaModalProcessos,
+      execucaoModalProcessos
   },
   data () {
     return {
@@ -134,6 +144,8 @@ export default {
       keyItem: 0,
       editItemAssinatura:false,
       viewItemAssinatura:false,
+      execEditItemAssinatura:false,
+      execViewItemAssinatura:false,
       keyItemAssinatura: 0,
       keyItemDelete: 1500,
       headers: [
@@ -207,6 +219,8 @@ export default {
           return '#ff9800'
         case 2:
           return '#f44336'
+        case 3:
+          return '#0dcaf0'
       }
     },
     getTextStatus (status) {
@@ -217,6 +231,8 @@ export default {
           return 'Tramitação'
         case 2:
           return 'Indeferido'
+        case 3:
+          return 'Execução'
       }
     },
     getColorStatusExpanded (status) {
@@ -284,6 +300,14 @@ export default {
       this.keyItemAssinatura++
       this.viewItemAssinatura = true
       this.editItemAssinatura = true
+      console.log(item)
+      //this.$refs.modalTemplates.dialog=true
+    },
+    executarProcesso (item) {
+      this.item = item
+      this.keyItemAssinatura++
+      this.execViewItemAssinatura = true
+      this.execEditItemAssinatura = true
       console.log(item)
       //this.$refs.modalTemplates.dialog=true
     },

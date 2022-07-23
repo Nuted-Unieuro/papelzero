@@ -239,6 +239,9 @@
         if(this.item.dt_encerramento != null){
           this.joditContent = this.joditContent.concat(gerarAssinatura.geradorQrCode(this.item))
         }
+        if(this.item.cod_status == 0 || this.item.cod_status == 3){
+          this.joditContent = this.joditContent.concat(gerarAssinatura.geradorQrCode(this.item))
+        }
         this.joditContent = this.joditContent.concat(gerarAssinatura.geradorReferencia(this.item))
       },   
       getAssinaturasUsuarios(item){

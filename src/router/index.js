@@ -29,6 +29,11 @@ const routes = [
     component: () => import('@/views/template/Template.vue'),
   },
   {
+    path: '/administracao',
+    name: 'administracao',
+    component: () => import('@/views/processo/Administracao.vue'),
+  },
+  {
     path: '/typography',
     name: 'typography',
     component: () => import('@/views/typography/Typography.vue'),
