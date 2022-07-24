@@ -52,7 +52,7 @@ class Service {
   }
 
   create (data) {
-    return axios.post(API_BASE_URL, data, { headers: authHeader() })
+    return axios.post(`${API_BASE_URL}/user`, data)
   }
 
   update (data, id) {

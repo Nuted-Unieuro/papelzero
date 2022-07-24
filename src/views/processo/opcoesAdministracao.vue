@@ -57,6 +57,15 @@
                                 persistent-hint
                             ></v-select>
                         </v-col>
+                         <v-col class="d-flex" cols="12" sm="6">
+                            <v-combobox
+                                v-model="dept_usuario"
+                                :items="todos_departamentos"
+                                label="Selecione os Departamentos do Usuário"
+                                multiple
+                                chips
+                            ></v-combobox>
+                        </v-col>
                     </v-row>
                     <v-row>
                         <v-col cols="4">
@@ -303,7 +312,7 @@
 
 <script>
     import usuariosService from '../../services/users.service'
-    import templatesService from '../../services/templates.service'
+    import departamentosService from '../../services/departamentos.service'
     import processosService from '../../services/processos.service'
     import gerarAssinatura from '../../services/gerarAssinatura.service'
     import 'jodit/build/jodit.min.css'
@@ -321,6 +330,8 @@
                 cargo: '',
                 email: '',
                 tipo_acesso: '',
+                todos_departamentos: [],
+                dept_usuario: null,
                 itens_tipo_acesso: [{value: 0, text: 'Administrador'}, {value: 1, text: 'Usuário'}, {value: 2, text: 'Template'} ],
                 sigilo: false,
                 infoProcesso: '',
@@ -373,7 +384,7 @@
         },
         mounted() {
             this.getDepartamentosByUser()
-            this.getTemplates()
+            this.getDepartamentos()
             this.getUsuarioLogadoAssinatura(this.$store.state.auth.user.id)
 
         },
@@ -458,8 +469,12 @@
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'Informe o Tipo de Acesso do Usuário'
+                }else if(this.dept_usuario == null){
+                    this.notify.type = 'warning'
+                    this.notify.color = 'red'
+                    this.notify.text = 'Informe o Tipo de Acesso do Usuário'
                 }else{
-                    this.createProcess()
+                    this.createUser()
                     this.alertTimeout()
                 }
             },
@@ -501,26 +516,17 @@
                     this.notify.value=false
                 },5000)
             },
-            createProcess(){
-                console.log('conteudo processo')
-                console.log(this.joditContent)
-                console.log('assinantes')
-                console.log(this.cacheAssinaturas)
-                console.log('acompanhantes')
-                console.log(this.cacheAssinaturasAcp)
-                console.log("sigilo")
-                console.log(this.sigilo)
-                console.log("responsavel")
-                console.log(this.userLogadoAssintaura)
-                let dadosProcessos = {}
-                dadosProcessos.conteudo = this.joditContent
-                dadosProcessos.assinantes = this.cacheAssinaturas
-                dadosProcessos.observadores = this.cacheAssinaturasAcp
-                dadosProcessos.sigilo = this.sigilo
-                dadosProcessos.solicitante = [_.find(this.userLogadoAssintaura, {dept_id:this.primeiroDept})]
-                dadosProcessos.tituloProcesso = this.tituloProcesso
-                console.log(dadosProcessos)
-                processosService.save(dadosProcessos)
+            createUser(){
+                let dadosUsuario = {}
+                dadosUsuario.nomeUsuario = this.nomeUsuario
+                dadosUsuario.cpf = this.cpf
+                dadosUsuario.matricula = this.matricula
+                dadosUsuario.cargo = this.cargo
+                dadosUsuario.email = this.email
+                dadosUsuario.dept_usuario = this.dept_usuario
+                dadosUsuario.tipo_acesso = this.tipo_acesso
+                console.log(dadosUsuario)
+                usuariosService.save(dadosUsuario)
                     .then((response) => {
                         console.log(response)
                     if (this.HTTP_CREATED === response.status || this.HTTP_OK === response.status) {
@@ -644,11 +650,13 @@
                 this.isLoading = false
                 })
             },
-            getTemplates(){
-                templatesService.findAllNotPage()
+            getDepartamentos(){
+                departamentosService.findAll()
                 .then((response) => {
                     if (response.data) {
-                        this.dadosTemplates = response.data
+                        this.todos_departamentos = response.data.map(function(i){
+                            return {"value": i.id, "text": i.nome_departamento }
+                        })
                     }
                 }).catch((e) => {
                     console.log(e.message)
