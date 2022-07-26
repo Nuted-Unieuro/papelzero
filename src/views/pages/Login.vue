@@ -57,20 +57,20 @@
             ></v-text-field>
 
             <div class="d-flex align-center justify-space-between flex-wrap">
-              <v-checkbox
+              <!-- <v-checkbox
                 label="Lembrar-me"
                 hide-details
                 class="me-3 mt-1"
               >
               </v-checkbox>
 
-              <!-- forgot link -->
+   
               <a
                 href="javascript:void(0)"
                 class="mt-1"
               >
                 Recuperar Senha?
-              </a>
+              </a> -->
             </div>
 
             <v-btn
@@ -87,14 +87,14 @@
         </v-card-text>
 
         <!-- create new account  -->
-        <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
+<!--         <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
           <span class="me-2">
             Novo por aqui?
           </span>
           <router-link :to="{name:'pages-register'}">
             Crie sua conta
           </router-link>
-        </v-card-text>
+        </v-card-text> -->
       </v-card>
     </div>
 

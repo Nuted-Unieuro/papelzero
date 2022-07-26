@@ -95,189 +95,19 @@
         </v-expansion-panel>
         <v-expansion-panel>
             <v-expansion-panel-header>
-                <b>Informações Sobre o Processo</b>
+                <b>Cadastrar Departamento</b>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
-
-                <v-container>
+                <v-container fluid>
                     <v-row align="center">
                         <v-col class="d-flex" cols="12" sm="6">
                             <v-text-field
-                                v-model="tituloProcesso"
-                                label="Título do Processo"
+                                v-model="nomeDepartamento"
+                                label="Nome Departamento"
                                 >
                             </v-text-field>
                         </v-col>
-                        <v-col class="d-flex" cols="12" sm="6">
-                            <v-autocomplete
-                                :items="dadosTemplates"
-                                item-text='descricao'
-                                item-value='id_template'
-                                label="Templates"
-                                chips
-                                v-model="primeiroTemplate"
-                                clearable
-                                deletable-chips
-                                auto-select-first
-                                @change="(event) => selectedTemplate(event)"
-                            ></v-autocomplete>
-                        </v-col>
-                        <v-col class="d-flex" cols="12" sm="6">
-                            <v-tooltip top>
-                                <template v-slot:activator="{ on, attrs }">
-                                    <div v-on="on" v-bind="attrs">
-                                        <v-switch
-                                            v-model="sigilo"
-                                            label="Documento Interno"
-                                            color="#f44336"
-                                            :value="sigilo = sigilo ? true : false"
-                                            hide-details
-                                            v-bind="attrs"
-                                            v-on="on"
-                                            >
-                                        </v-switch>
-                                    </div>                                    
-                                </template>
-                                <span>Se habilitado, somente usuários autenticados que participam do processo podem visualizar.</span>
-                            </v-tooltip>
-                        </v-col>
                     </v-row>
-                </v-container>          
-                        
-            </v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-            <v-expansion-panel-header>
-                <b>Processo</b>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-
-                <v-container>
-                    <v-row>
-                        <v-col cols="12">
-                            <div id="FaqEdit" v-bind:class="[joditContentIsEmpty ? 'force-is-danger' : '']">
-                                <jodit-editor
-                                    v-model.trim="joditContent"
-                                    :buttons="buttons"
-                                    :config="config"
-                                />
-                            </div>
-                        </v-col>
-                    </v-row>
-                </v-container>          
-                        
-            </v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-            <v-expansion-panel-header>
-                <b>Assinaturas e Encaminhamentos</b>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-
-                <v-container>
-                    <v-row>
-                        <v-col cols="12" sm="12" md="6">
-                            <v-autocomplete
-                                v-model="usersSelected"
-                                :loading="isLoading"
-                                :items="dadosUsuarios"
-                                :search-input.sync="getUsers"
-                                hide-no-data
-                                hide-selected
-                                item-value='id'
-                                class="mx-4"
-                                chips
-                                @change="changeComboAssinaturas()"
-                                :disable-lookup="true"
-                                clearable
-                                deletable-chips
-                                label="Buscar usuários para ASSINAR o processo"
-                                item-text="name"
-                                multiple
-                            >
-                                <template v-slot:selection="data">
-                                    <v-tooltip left>
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-chip
-                                                :input-value="data.selected"
-                                                :close="data.item.user_id !== dadosDepartamentos[0].id"
-                                                v-bind="attrs"
-                                                v-on="on"
-                                                @click:close="data.item.user_id !== dadosDepartamentos[0].id ? remove(data.item) : ''"
-                                                @click="data.select"
-                                            >
-                                                {{ data.item.name }}
-                                            </v-chip>
-                                        </template>
-                                        <span>{{data.item.nome_departamento}}</span>
-                                    </v-tooltip>
-                                </template>
-                                <template v-slot:item="data">
-                                    <template>
-                                        <v-list-item-content>
-                                            <v-list-item-title v-html="data.item.matricula + ' - ' + data.item.name"></v-list-item-title>
-                                            <v-list-item-subtitle v-html="data.item.nome_departamento"></v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </template>
-                                </template>
-                            </v-autocomplete>
-                        </v-col>
-                        <v-col cols="12" sm="12" md="6">
-                            <v-autocomplete
-                                v-model="usersSelectedAcp"
-                                :loading="isLoadingAcp"
-                                :items="dadosUsuariosAcp"
-                                :search-input.sync="getUsersAcp"
-                                hide-no-data
-                                hide-selected
-                                item-value="id"
-                                class="mx-4"
-                                chips
-                                clearable
-                                deletable-chips
-                                label="Buscar usuários para ACOMPANHAR o processo"
-                                item-text="name"
-                                multiple
-                            >
-                                <template v-slot:selection="data">
-                                    <v-tooltip left>
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-chip
-                                                :input-value="data.selected"
-                                                close
-                                                v-bind="attrs"
-                                                v-on="on"
-                                                @click:close="removeAcp(data.item)"
-                                                @click="data.select"
-                                            >
-                                                {{ data.item.name }}
-                                            </v-chip>
-                                        </template>
-                                        <span>{{data.item.nome_departamento}}</span>
-                                    </v-tooltip>
-                                </template>
-                                <template v-slot:item="data">
-                                    <template>
-                                        <v-list-item-content>
-                                            <v-list-item-title v-html="data.item.matricula + ' - ' + data.item.name"></v-list-item-title>
-                                            <v-list-item-subtitle v-html="data.item.nome_departamento"></v-list-item-subtitle>
-                                        </v-list-item-content>
-                                    </template>
-                                </template>
-                            </v-autocomplete>
-                        </v-col>
-                    </v-row>
-                </v-container>
-              
-            </v-expansion-panel-content>
-        </v-expansion-panel>
-        <v-expansion-panel>
-            <v-expansion-panel-header>
-                <b>Submeter Processo</b>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-
-                <v-container>
                     <v-row>
                         <v-col cols="4">
                             <v-btn
@@ -285,11 +115,10 @@
                                 :loading="loading"
                                 :disabled="loading"
                                 color="info"
-                                @click="submeterProcesso()"
+                                @click="cadastrarDepartamento()"
                                 >
-                                Registrar Processo
+                                Cadastrar Departamento
                                 </v-btn>
-                                <p>*Ao clicar em Registrar Processo, você concorda em assinar o documento digitalmente e se responsabiliza pelo seu conteúdo. Todos os participantes do processo serão notificados.</p>
                             </v-col>
                         <v-col cols="6">
                            <v-alert
@@ -302,8 +131,7 @@
                             </v-alert>
                         </v-col>
                     </v-row>
-                </v-container>          
-                        
+                </v-container>
             </v-expansion-panel-content>
         </v-expansion-panel>
     </v-expansion-panels>
@@ -332,6 +160,7 @@
                 tipo_acesso: '',
                 todos_departamentos: [],
                 dept_usuario: null,
+                nomeDepartamento: '',
                 itens_tipo_acesso: [{value: 0, text: 'Administrador'}, {value: 1, text: 'Usuário'}, {value: 2, text: 'Template'} ],
                 sigilo: false,
                 infoProcesso: '',
@@ -440,6 +269,13 @@
                 this.loading = false
 
             },
+            cadastrarDepartamento() {
+                this.loading = true
+                this.validarCamposCadastrarDepartamento()
+                //this.createProcess()
+                this.loading = false
+
+            },
             validarCamposCadastrarUsuario(){
                 this.notify = 
                     {
@@ -475,6 +311,24 @@
                     this.notify.text = 'Informe o Tipo de Acesso do Usuário'
                 }else{
                     this.createUser()
+                    this.alertTimeout()
+                }
+            },
+            validarCamposCadastrarDepartamento(){
+                this.notify = 
+                    {
+                        value: true,
+                        type: 'success',
+                        text: 'O Departamento foi cadastrado com Sucesso',
+                        color: 'green'
+                    }
+        
+                if(this.nomeDepartamento === ''){
+                    this.notify.type = 'warning'
+                    this.notify.color = 'red'
+                    this.notify.text = 'Informe o Nome do Departamento'
+                }else{
+                    this.createDepartamento()
                     this.alertTimeout()
                 }
             },
@@ -527,6 +381,22 @@
                 dadosUsuario.tipo_acesso = this.tipo_acesso
                 console.log(dadosUsuario)
                 usuariosService.save(dadosUsuario)
+                    .then((response) => {
+                        console.log(response)
+                    if (this.HTTP_CREATED === response.status || this.HTTP_OK === response.status) {
+                        this.showSuccess()
+                    }
+                    }).catch((e) => {
+                    this.handleError(e)
+                    }).finally(() => {
+                    this.isLoading = false
+                    })
+            },
+            createDepartamento(){
+                let dadosDepartamento = {}
+                dadosDepartamento.nomeDepartamento = this.nomeDepartamento
+                console.log(dadosDepartamento)
+                departamentosService.save(dadosDepartamento)
                     .then((response) => {
                         console.log(response)
                     if (this.HTTP_CREATED === response.status || this.HTTP_OK === response.status) {

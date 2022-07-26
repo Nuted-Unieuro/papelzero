@@ -45,7 +45,7 @@ class Service {
   }
 
   create (data) {
-    return axios.post(API_BASE_URL, data, { headers: authHeader() })
+    return axios.post(`${API_BASE_URL}`, data)
   }
 
   update (data, id) {
