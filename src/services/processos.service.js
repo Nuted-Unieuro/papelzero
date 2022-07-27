@@ -12,6 +12,9 @@ class Service {
   processoByUsuario (data, query) {
     return axios.get(`${API_BASE_URL}/processobyusuario/${query}?page=${data.page}`)
   }
+  processoByReferencia (data) {
+    return axios.get(`${API_BASE_URL}/processobyreferencia/${data}`)
+  }
 
   findAllByConnectedUser () {
     return axios.get(`${API_BASE_URL}/find-by-user`, { headers: authHeader() })

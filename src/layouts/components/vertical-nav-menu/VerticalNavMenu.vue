@@ -62,6 +62,11 @@
         :to="{ name: 'templates'}"
         :icon="icons.mdiTableEdit"
       ></nav-menu-link>
+      <nav-menu-link
+        title="Validar Processo"
+        :to="{ name: 'validar'}"
+        :icon="icons.mdiCheckDecagram"
+      ></nav-menu-link>
       <!-- <nav-menu-link
         title="Account Settings"
         :to="{ name: 'pages-account-settings'}"
@@ -132,6 +137,7 @@ import {
   mdiFileDocumentMultiple,
   mdiFileDocument,
   mdiConsole,
+  mdiCheckDecagram,
   mdiTableEdit
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
@@ -164,7 +170,8 @@ export default {
         mdiFileDocumentMultiple,
         mdiFileDocument,
         mdiConsole,
-        mdiTableEdit
+        mdiTableEdit,
+        mdiCheckDecagram
       },
     }
   },

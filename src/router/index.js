@@ -9,6 +9,14 @@ const routes = [
     redirect: 'processos',
   },
   {
+    path: '/validar',
+    name: 'validar',
+    component: () => import('@/views/pages/Validar.vue'),
+    meta: {
+      layout: 'blank',
+    },
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/dashboard/Dashboard.vue'),
@@ -104,6 +112,7 @@ router.beforeEach((to, from, next) => {
     '/pages/login',
     '/error-404',
     '/pages/register',
+    '/validar'
   ]
   const authRequired = !publicPages.includes(to.path)
   const loggedIn = localStorage.getItem('user')

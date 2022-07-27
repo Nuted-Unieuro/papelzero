@@ -87,14 +87,14 @@
         </v-card-text>
 
         <!-- create new account  -->
-<!--         <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
+         <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
           <span class="me-2">
-            Novo por aqui?
+            Validação de Processos?
           </span>
-          <router-link :to="{name:'pages-register'}">
-            Crie sua conta
+          <router-link :to="{name:'validar'}">
+            Clique Aqui!
           </router-link>
-        </v-card-text> -->
+        </v-card-text> 
       </v-card>
     </div>
 
