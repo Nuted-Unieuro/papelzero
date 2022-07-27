@@ -140,10 +140,20 @@
             .then((response) => {
                 console.log(response)
                 if (response.data) {
-                    this.item = response.data[0]
-                this.assinatura = this.getAssinaturasUsuarios(response.data[0])
-                this.joditContent = response.data[0].desc_documento
-                this.viewJodit = true
+                    if(response.data.length > 0){
+                        this.item = response.data[0]
+                        this.assinatura = this.getAssinaturasUsuarios(response.data[0])
+                        this.joditContent = response.data[0].desc_documento
+                        this.viewJodit = true
+                    }
+                    else{
+                        this.viewJodit = false
+                        this.notify.type = 'warning'
+                        this.notify.color = 'red'
+                        this.notify.text = 'Processo não encontrado, não finalizado ou indeferido!'
+                        this.notify.value=true
+                        this.alertTimeout()
+                    }
                 }
             }).catch((e) => {
                 console.log(e.message)
@@ -153,7 +163,7 @@
                 } else {
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
-                    this.notify.text = 'Processo não encontrado!'
+                    this.notify.text = 'Processo não encontrado, ou não finalizado!'
                     this.notify.value=true
                     this.alertTimeout()
                 }
