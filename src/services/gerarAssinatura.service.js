@@ -84,7 +84,6 @@ class Service {
                 </tr>
             </tbody>
         </table>
-        <br>
         `
       return assinatura
     }
