@@ -33,9 +33,18 @@
             small
             class="ms-3"
           >
+            <v-badge
+              :content="notification"
+              v-if="notification > 0"
+            >
             <v-icon>
               {{ icons.mdiBellOutline }}
             </v-icon>
+            </v-badge>
+            <v-icon v-if="notification == 0">
+              {{ icons.mdiBellOutline }}
+            </v-icon>
+
           </v-btn>
           <app-bar-user-menu></app-bar-user-menu>
         </div>
@@ -76,19 +85,24 @@ import { mdiMagnify, mdiBellOutline, mdiGithub } from '@mdi/js'
 import VerticalNavMenu from './components/vertical-nav-menu/VerticalNavMenu.vue'
 import ThemeSwitcher from './components/ThemeSwitcher.vue'
 import AppBarUserMenu from './components/AppBarUserMenu.vue'
+import processosService from '../services/processos.service'
+import { _ } from '@/utils'
 
 export default {
   components: {
     VerticalNavMenu,
     ThemeSwitcher,
     AppBarUserMenu,
+    processosService
   },
-  setup() {
+  data() {
     const isDrawerOpen = ref(null)
 
     return {
       isDrawerOpen,
-
+      notification: 0,
+      arrayOld: [],
+      arrayNew: [],
       // Icons
       icons: {
         mdiMagnify,
@@ -97,6 +111,44 @@ export default {
       },
     }
   },
+  methods: {
+    getNotification(){
+      processosService.processospendentesusuario(this.$store.state.auth.user.id)
+        .then((response) => {
+            if (response.data) {
+                if(this.arrayOld.length === 0){
+                  this.arrayOld = response.data.data
+                  this.arrayNew =  response.data.data
+                }
+                else{
+                  const array2Sorted = this.arrayOld.slice().sort();
+                  let checkArray = response.data.data.length === this.arrayOld.length && response.data.data.slice().sort().every(function(value, index) {
+                      return value === array2Sorted[index];
+                  });
+                  if(!checkArray){
+                    this.arrayOld = response.data.data
+                  }
+                }
+                this.notification = response.data.data.length
+            }
+        }).catch((e) => {
+            console.log(e)
+        }).finally(() => {
+            this.isLoading = false
+        })
+    },
+    intervalFetchData: function () {
+    setInterval(() => {    
+        this.getNotification();
+        }, 30000);    
+    }
+  },
+  mounted () {
+    this.intervalFetchData();
+  },
+  created (){
+    this.getNotification()
+  }
 }
 </script>
 

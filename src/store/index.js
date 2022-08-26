@@ -20,7 +20,8 @@ export default new Vuex.Store({
     matricula: null,
     name: null,
     tipo_acesso: null,
-    updated_at: null
+    updated_at: null,
+    notification: 0
   },
   mutations: {
     basic (state, payload) {

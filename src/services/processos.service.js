@@ -12,6 +12,10 @@ class Service {
   processoByUsuario (data, query) {
     return axios.get(`${API_BASE_URL}/processobyusuario/${query}?page=${data.page}`)
   }
+
+  processospendentesusuario (query) {
+    return axios.get(`${API_BASE_URL}/processospendentesusuario/${query}`)
+  }
   processoByReferencia (data) {
     return axios.get(`${API_BASE_URL}/processobyreferencia/${data}`)
   }
