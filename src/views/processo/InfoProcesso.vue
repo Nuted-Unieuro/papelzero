@@ -350,7 +350,6 @@
         },
         methods:{
             selectedTemplate(event){
-                console.log(event)
                 let template = ''
                 let x = this.dadosTemplates.map(function(item){
                     if(item.id === event){
@@ -358,11 +357,9 @@
                     }
                 })
                 this.joditContent = template
-                console.log(template)
             },
             changeComboAssinaturas () {
                 let userLogado = _.find(this.userLogadoAssintaura, {dept_id:this.primeiroDept})
-                console.log(this.userLogadoAssintaura, 'paga1')
                 this.usersSelected.filter(obj1 => obj1==userLogado.id).length > 0 ? this.usersSelected : this.usersSelected.push(userLogado.id)
             },
             submeterProcesso() {
@@ -375,7 +372,7 @@
             validarCampos(){
                 this.notify = 
                     {
-                        value: true,
+                        value: false,
                         type: 'success',
                         text: 'O Processo foi Registrado com Sucesso',
                         color: 'green'
@@ -383,26 +380,29 @@
                 let assintantes = this.cacheAssinaturas
                 let observadores = this.cacheAssinaturasAcp
                 let count = assintantes.length + observadores.length
-                console.log(count, 'count')
+                
                 if(this.primeiroDept === null){
+                    this.notify.value=true
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'Selecione o departamento do solicitante'
                 }else if(this.tituloProcesso === ''){
+                    this.notify.value=true
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'O título do processo não pode ser vazio'
                 }else if(this.joditContent === ''){
+                    this.notify.value=true
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'O processo não pode ser vazio'
                 }else if(count < 2){
+                    this.notify.value=true
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'Selecione ao menos dois participantes no processo'
                 }else{
                     this.createProcess()
-                    this.alertTimeout()
                 }
             },
             alertTimeout(){
@@ -411,16 +411,6 @@
                 },5000)
             },
             createProcess(){
-                console.log('conteudo processo')
-                console.log(this.joditContent)
-                console.log('assinantes')
-                console.log(this.cacheAssinaturas)
-                console.log('acompanhantes')
-                console.log(this.cacheAssinaturasAcp)
-                console.log("sigilo")
-                console.log(this.sigilo)
-                console.log("responsavel")
-                console.log(this.userLogadoAssintaura)
                 let dadosProcessos = {}
                 dadosProcessos.conteudo = this.joditContent
                 dadosProcessos.assinantes = this.cacheAssinaturas
@@ -428,32 +418,28 @@
                 dadosProcessos.sigilo = this.sigilo
                 dadosProcessos.solicitante = [_.find(this.userLogadoAssintaura, {dept_id:this.primeiroDept})]
                 dadosProcessos.tituloProcesso = this.tituloProcesso
-                console.log(dadosProcessos)
                 processosService.save(dadosProcessos)
                     .then((response) => {
-                        console.log(response)
                     if (this.HTTP_CREATED === response.status || this.HTTP_OK === response.status) {
-                        this.showSuccess()
+                        setTimeout(() => {
+                            window.location = "/processos"
+                        },5000)
                     }
                     }).catch((e) => {
-                    this.handleError(e)
+                        this.notify.type = 'warning'
+                        this.notify.color = 'red'
+                        this.notify.text = 'Houve um erro durante a geração do processo. Se o erro persistir contate o Administrador.'
+                        
                     }).finally(() => {
-                    this.isLoading = false
+                        this.notify.value=true
+                        this.alertTimeout()
                     })
             },
             pushOrRemoveAssinaturas(dados){
                 this.cacheAssinaturas =  this.dadosUsuarios.filter(obj1 => dados.find(obj2 => obj1.id===obj2));
-                console.log('array cache')
-                console.log(dados)
-                console.log(this.dadosUsuarios)
-                console.log(this.cacheAssinaturas)
             },
             pushOrRemoveAssinaturasAcp(dados){
                 this.cacheAssinaturasAcp =  this.dadosUsuariosAcp.filter(obj1 => dados.find(obj2 => obj1.id===obj2));
-                console.log('array cache')
-                console.log(dados)
-                console.log(this.dadosUsuariosAcp)
-                console.log(this.cacheAssinaturasAcp)
             },
             gerarAssinatura(){
                 this.joditContent = this.joditContent.concat(gerarAssinatura.geradorConfidencial(this.templateInit))
@@ -476,10 +462,8 @@
                         response.data =  response.data.filter(obj1 => !this.usersSelected.find(obj2 => obj1.id===obj2));
                         this.dadosUsuarios = response.data
                         this.dadosUsuarios = this.dadosUsuarios.concat(this.cacheAssinaturas)
-                        console.log('entrou', this.dadosUsuarios)
                     }
                 }).catch((e) => {
-                    console.log(e.message)
                     if (this.HTTP_UNAUTHORIZED === e.response.status ||
                         this.HTTP_FORBIDDEN === e.response.status) {
                         this.logout(e.response.status)
@@ -501,7 +485,6 @@
                         this.usersSelected = [response.data[0].id]
                     }
                 }).catch((e) => {
-                    console.log(e.message)
                     if (this.HTTP_UNAUTHORIZED === e.response.status ||
                         this.HTTP_FORBIDDEN === e.response.status) {
                         this.logout(e.response.status)
@@ -522,7 +505,6 @@
                         this.dadosUsuariosAcp = this.dadosUsuariosAcp.concat(this.cacheAssinaturasAcp)
                     }
                 }).catch((e) => {
-                    console.log(e.message)
                     if (this.HTTP_UNAUTHORIZED === e.response.status ||
                         this.HTTP_FORBIDDEN === e.response.status) {
                         this.logout(e.response.status)
@@ -534,7 +516,6 @@
                 })
             },
             getDepartamentosByUser(){
-                console.log(this.$store.state.auth.user, 'store')
                 usuariosService.findUserWithDepartament(this.$store.state.auth.user)
                 .then((response) => {
                     if (response.data) {
@@ -542,7 +523,6 @@
                         this.primeiroDept = response.data[0].departamentos[0].id
                     }
                 }).catch((e) => {
-                    console.log(e.message)
                     if (this.HTTP_UNAUTHORIZED === e.response.status ||
                         this.HTTP_FORBIDDEN === e.response.status) {
                         this.logout(e.response.status)
@@ -560,7 +540,6 @@
                         this.dadosTemplates = response.data
                     }
                 }).catch((e) => {
-                    console.log(e.message)
                     if (this.HTTP_UNAUTHORIZED === e.response.status ||
                         this.HTTP_FORBIDDEN === e.response.status) {
                         this.logout(e.response.status)
@@ -576,15 +555,12 @@
                 if (index >= 0) this.usersSelected.splice(index, 1)
             },
             removeAcp (item) {
-                console.log(item, this.usersSelectedAcp)
                 const index = this.usersSelectedAcp.indexOf(item.id)
                 if (index >= 0) this.usersSelectedAcp.splice(index, 1)
             },
             changeUserAssinatura (item) {
                 let userLogado = _.find(this.userLogadoAssintaura, {dept_id:item})
-                console.log(userLogado)
                 this.usersSelected = [userLogado.id]
-                console.log(item)
             }
         }
     }
