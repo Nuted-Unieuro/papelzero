@@ -2,6 +2,42 @@
     .jodit .jodit-wysiwyg {
         background-color: #fff !important;
     }
+    .custom-loader {
+    animation: loader 1s infinite;
+    display: flex;
+  }
+  @-moz-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-webkit-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @-o-keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes loader {
+    from {
+      transform: rotate(0);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
 </style>
 <template>
   <div>
@@ -290,6 +326,7 @@
                 usersSelectedAcp: [],
                 isLoadingAcp: false,
                 loading: false,
+                loader: null,
                 joditContentIsEmpty: false,
                 joditContent: '',
                 config: this.getDefaultJoditConfig(),
@@ -366,7 +403,6 @@
                 this.loading = true
                 this.validarCampos()
                 //this.createProcess()
-                this.loading = false
 
             },
             validarCampos(){
@@ -386,21 +422,25 @@
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'Selecione o departamento do solicitante'
+                    this.loading = false
                 }else if(this.tituloProcesso === ''){
                     this.notify.value=true
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'O título do processo não pode ser vazio'
+                    this.loading = false
                 }else if(this.joditContent === ''){
                     this.notify.value=true
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'O processo não pode ser vazio'
+                    this.loading = false
                 }else if(count < 2){
                     this.notify.value=true
                     this.notify.type = 'warning'
                     this.notify.color = 'red'
                     this.notify.text = 'Selecione ao menos dois participantes no processo'
+                    this.loading = false
                 }else{
                     this.createProcess()
                 }
@@ -471,7 +511,7 @@
                         this.showError()
                     }
                 }).finally(() => {
-                    this.isLoading = false
+                    this.loading = false
                 })
             },
             getUsuarioLogadoAssinatura(query){
