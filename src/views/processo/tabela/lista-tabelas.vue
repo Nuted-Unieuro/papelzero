@@ -90,7 +90,7 @@
 
       <!-- Template da coluna de ações -->
       <template v-slot:[`item.actions`]="{ item }">
-        <v-icon v-if="item.dt_assinatura == null && item.cod_status != 2 && item.permissao != 0"
+        <v-icon v-if="item.dt_assinatura == null && item.cod_status != 2 && item.permissao != 0 && item.habilitar_assinatura == true"
           small
           class="mr-2"
           @click="assinarProcesso(item)"
@@ -132,6 +132,7 @@ export default {
       singleExpand: true,
       totalItens: 0,
       totalItensExpanded: 0,
+      habilitarAssinatura: false,
       dados: [],
       loading: true,
       loadingExpanded: true,
@@ -269,8 +270,16 @@ export default {
       console.log(this.options)
       procesosService.processoByUsuario(this.options, this.$store.state.auth.user.id)
         .then((response) => {
-          console.log(response)
+          console.log(response, 'chegou')
           if (response.data) {
+            response.data.data.map(function(i){
+              console.log(i)
+              i['habilitar_assinatura'] = false
+              i.assinaturas.map(function(j){
+                if(j.user_id == this.$store.state.auth.user.id && j.dt_assinatura == null)
+                  i['habilitar_assinatura'] = true
+              }, this)
+            }, this)
             this.dados = response.data.data
             this.totalItens = response.data.total
             this.loading = false

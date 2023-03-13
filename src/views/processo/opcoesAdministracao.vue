@@ -161,7 +161,7 @@
                 todos_departamentos: [],
                 dept_usuario: null,
                 nomeDepartamento: '',
-                itens_tipo_acesso: [{value: 0, text: 'Administrador'}, {value: 1, text: 'Usuário'}, {value: 2, text: 'Template'} ],
+                itens_tipo_acesso: [{value: 0, text: 'Administrador'}, {value: 1, text: 'Usuário'}, {value: 2, text: 'Template'}, {value: 3, text: 'Grupo'} ],
                 sigilo: false,
                 infoProcesso: '',
                 tituloProcesso: '',
