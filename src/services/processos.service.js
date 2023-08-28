@@ -10,7 +10,8 @@ class Service {
   }
 
   processoByUsuario (data, query) {
-    return axios.get(`${API_BASE_URL}/processobyusuario/${query}?page=${data.page}`)
+    console.log("processoByUsuario", data)
+    return axios.get(`${API_BASE_URL}/processobyusuario/${query}?page=${data.page}&filter=${data.filters.titulo}&usuario=${data.filters.usuario}&cod_status=${data.filters.cod_status}&nome_departamento=${data.filters.nome_departamento}`)
   }
 
   processospendentesusuario (query) {

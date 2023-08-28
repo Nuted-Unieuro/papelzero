@@ -18,6 +18,46 @@
     :loading="loading"
     @item-expanded="getDataExpanded">
   >
+  <template v-slot:header.titulo="{ header }">
+    {{ header.text }}
+    <v-text-field
+      v-model="filters.titulo"
+      label="Filtrar"
+      single-line
+      hide-details
+    ></v-text-field>
+  </template>
+  <template v-slot:header.cod_status="{ header }">
+    {{ header.text }}
+    <v-select
+    v-model="filters.cod_status"
+    :items="statusOptions"
+    label="Selecionar Status"
+    single-line
+    hide-details
+    item-text="text"
+    item-value="value"
+    ></v-select>
+  </template>
+  <template v-slot:header.name="{ header }">
+    {{ header.text }}
+    <v-text-field
+      v-model="filters.usuario"
+      label="Filtrar"
+      single-line
+      hide-details
+    ></v-text-field>
+  </template>
+  <template v-slot:header.nome_departamento="{ header }">
+    {{ header.text }}
+    <v-text-field
+      v-model="filters.nome_departamento"
+      label="Filtrar"
+      single-line
+      hide-details
+    ></v-text-field>
+  </template>
+
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Lista de Processos</v-toolbar-title>
@@ -70,6 +110,16 @@
           </v-data-table>
           <br>
         </td>         
+      </template>
+
+      <template v-slot:headers="{ header }">
+        {{ `${header.text}f` }}
+        <v-text-field
+          v-model="filters.titulo"
+          label="Filtrar"
+          single-line
+          hide-details
+        ></v-text-field>
       </template>
 
       <!-- Template Colunas Status -->
@@ -166,7 +216,20 @@ export default {
         { text: 'Status', value: 'cod_status' },
         { text: 'Observações', value: 'observacao' },
       ],
-      dadosExpanded: []
+      dadosExpanded: [],
+      filters: {
+            titulo: '',
+            cod_status: '',
+            usuario: '',
+            nome_departamento: ''
+      },
+      statusOptions: [
+            { text: 'Finalizado', value: 0 },
+            { text: 'Tramitação', value: 1 },
+            { text: 'Indeferido', value: 2 },
+            { text: 'Execução', value: 3 },
+            { text: 'Todos', value: '' }
+      ]
     }
   },
   watch: {
@@ -182,8 +245,59 @@ export default {
       },
       deep: true,
     },
+    'filters.titulo': function(newVal, oldVal) {
+      console.log(newVal, oldVal)
+        if (newVal !== oldVal) {
+            this.filterData();
+        }
+        deep: true
+    },
+    'filters.usuario': function(newVal, oldVal) {
+      console.log(newVal, oldVal)
+        if (newVal !== oldVal) {
+            this.filterData();
+        }
+        deep: true
+    },
+    'filters.cod_status': function(newVal, oldVal) {
+      console.log(newVal, oldVal)
+        if (newVal !== oldVal) {
+            this.filterData();
+        }
+        deep: true
+    },
+    'filters.nome_departamento': function(newVal, oldVal) {
+      console.log(newVal, oldVal)
+        if (newVal !== oldVal) {
+            this.filterData();
+        }
+        deep: true
+    }
   },
   methods: {
+    clearFilter() {
+        this.filters.titulo = '';
+        this.filterData(); // Atualize os dados após limpar o filtro
+    },
+    filterData() {
+        // Combine options and filters for the server-side request
+        const requestData = {
+            ...this.options,
+            filters: this.filters
+        };
+        
+        // Make the server-side request
+        procesosService.processoByUsuario(requestData, this.$store.state.auth.user.id)
+            .then((response) => {
+                // Handle the response and update the table data
+                this.dados = response.data.data;
+                this.totalItens = response.data.total;
+            })
+            .catch((e) => {
+                // Handle errors
+                console.error(e);
+            });
+    },
     getDataExpanded({item}) {
       this.loadingExpanded = true
       const { sortBy, sortDesc, page, itemsPerPage } = this.optionsExpanded
@@ -267,8 +381,12 @@ export default {
     getDataFromApi () {
       this.loading = true
       const { sortBy, sortDesc, page, itemsPerPage } = this.options
+      const requestData = {
+        ...this.options,
+        filters: this.filters
+      };
       console.log(this.options)
-      procesosService.processoByUsuario(this.options, this.$store.state.auth.user.id)
+      procesosService.processoByUsuario(requestData, this.$store.state.auth.user.id)
         .then((response) => {
           console.log(response, 'chegou')
           if (response.data) {
