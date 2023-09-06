@@ -38,7 +38,7 @@ class Service {
                     <td style="width: 18%; border-color: rgba(255, 255, 255, 0);"><img src="https://chart.googleapis.com/chart?chs=500x500&cht=qr&chl=${data.uuid}" alt="" width="150" height="150"></td>
                     <td style="width: 2%; border-color: rgba(255, 255, 255, 0);"><br></td>
                     <td style="width: 80%; color: rgb(0, 0, 0); border-color: rgba(255, 255, 255, 0);">
-                    A autenticidade deste documento poder ser conferida no site do Centro Universitário Euro-Americano - UNIEURO https://zero-papel.herokuapp.com/validar, informando o número da referência:<br> <strong> ${data.uuid} </strong>.</td>
+                    A autenticidade deste documento poder ser conferida no site do Centro Universitário Euro-Americano - UNIEURO https://nuted-unieuro.github.io/papelzero/#/validar, informando o número da referência:<br> <strong> ${data.uuid} </strong>.</td>
                 </tr>
             </tbody>
         </table>`
