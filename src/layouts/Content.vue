@@ -73,13 +73,9 @@
               class="text-decoration-none"
               target="_blank"
             >Nuted Unieuro</a></span>
-        </div>
-      </div>
-      <div class="boxed-container w-full">
-        <div class="mx-6 d-flex justify-space-between">
-          <span v-if="lastCommitDate">
-            Última atualização: {{ new Date(lastCommitDate).toLocaleDateString() }}
-          </span>
+            <span v-if="lastCommitDate">
+              Última Versão: {{ new Date(lastCommitDate).toLocaleDateString() }}
+            </span>
         </div>
       </div>
     </v-footer>
