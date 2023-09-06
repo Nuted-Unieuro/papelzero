@@ -65,14 +65,21 @@
       height="56"
       class="px-0"
     >
-      <div class="boxed-container w-full">
+    <div class="boxed-container w-full">
         <div class="mx-6 d-flex justify-space-between">
           <span>
-            &copy; 2022 <a
+            &copy; 2023 <a
               href="mailto:michel.rosa@unieuro.edu.br"
               class="text-decoration-none"
               target="_blank"
             >Nuted Unieuro</a></span>
+        </div>
+      </div>
+      <div class="boxed-container w-full">
+        <div class="mx-6 d-flex justify-space-between">
+          <span v-if="lastCommitDate">
+            Última atualização: {{ new Date(lastCommitDate).toLocaleDateString() }}
+          </span>
         </div>
       </div>
     </v-footer>
@@ -143,8 +150,15 @@ export default {
         }, 30000);    
     }
   },
-  mounted () {
+  async mounted () {
     this.intervalFetchData();
+    try {
+      const response = await fetch('https://api.github.com/repos/Nuted-Unieuro/papelzero/commits');
+      const commits = await response.json();
+      this.lastCommitDate = commits[0].commit.committer.date;
+    } catch (error) {
+      console.error('Erro ao buscar a data do último commit:', error);
+    }
   },
   created (){
     this.getNotification()
