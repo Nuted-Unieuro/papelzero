@@ -1,7 +1,7 @@
 const { mergeSassVariables } = require('@vuetify/cli-plugin-utils')
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/papelzero' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/papelzero/pages' : '/',
   lintOnSave: false,
   transpileDependencies: ['vuetify'],
   chainWebpack: config => {
