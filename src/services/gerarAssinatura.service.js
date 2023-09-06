@@ -1,7 +1,7 @@
 class Service {
     geradorAssinatura (data) {
         let dataAssinatura = new Date(data.dataAssinatura).toLocaleString()
-        dataAssinatura = dataAssinatura.replace(' ', ', às ')
+        dataAssinatura = dataAssinatura.replace(' ', ' às ')
         const assinatura =
             `<p class="MsoNormal" style="margin: 0px; break-after: avoid; font-size: 0px; font-family: &quot;Times New Roman&quot;, serif; text-indent: 0px; text-align: center;">
                 <span style="color: black; font-family: &quot;Century Gothic&quot;, sans-serif; font-size: 0px; letter-spacing: 0em;">
